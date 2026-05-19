@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+streamlit
+psycopg2-binary
+scikit-learn
+pandas
+numpy
+psutil
+scapy
+websockets
+requests
+python-dotenv
