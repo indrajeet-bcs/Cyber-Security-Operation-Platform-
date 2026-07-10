@@ -66,7 +66,62 @@ SUPPRESSION_WINDOWS = {
     "browser_download_execution_chain": WINDOW_30_MIN,
     "docker_attack_pattern": WINDOW_10_MIN,
     "risk_score_escalation": WINDOW_1_HOUR,
+    # NGINX detectors (new — additive)
+    "nginx_brute_force": WINDOW_5_MIN,
+    "nginx_recon_scanning": WINDOW_10_MIN,
 }
+
+
+# ---------------------------------------------------------------------------
+# NGINX Correlation Constants (centralized — configurable in one place)
+# ---------------------------------------------------------------------------
+
+# Number of failed HTTP auth attempts from same IP to trigger brute-force alert
+NGINX_BRUTE_FORCE_THRESHOLD: int = 5
+# Sliding window duration for NGINX brute-force detection
+NGINX_BRUTE_FORCE_WINDOW: timedelta = WINDOW_5_MIN
+
+# Number of distinct sensitive paths probed from same IP to trigger recon alert
+NGINX_RECON_PATH_THRESHOLD: int = 5
+# Sliding window duration for NGINX recon scanning detection
+NGINX_RECON_WINDOW: timedelta = WINDOW_10_MIN
+
+# Sensitive/reconnaissance path prefixes (case-insensitive startswith)
+_NGINX_RECON_PATHS: frozenset[str] = frozenset({
+    "/.git",
+    "/.env",
+    "/.htaccess",
+    "/admin",
+    "/config",
+    "/backup",
+    "/phpinfo",
+    "/wp-admin",
+    "/wp-config",
+    "/server-status",
+    "/actuator",
+    "/debug",
+    "/.ds_store",
+    "/web.config",
+    "/credentials",
+    "/phpmyadmin",
+    "/manager",
+    "/console",
+    "/api/v1/admin",
+})
+
+# HTTP status codes that are relevant for NGINX recon/scanning detection
+_NGINX_SUSPICIOUS_STATUS_CODES: frozenset[str] = frozenset({"401", "403", "404", "500"})
+
+# URI path substrings that identify login endpoints for auth failure detection
+_NGINX_LOGIN_URI_PATTERNS: tuple[str, ...] = (
+    "/login",
+    "/signin",
+    "/auth",
+    "/session",
+    "/token",
+    "/api/auth",
+    "/api/login",
+)
 
 
 class CorrelationService:
@@ -139,6 +194,10 @@ class CorrelationService:
         elif corr_type == "risk_score_escalation":
             entity = source_ip or user or "unknown"
             return f"risk_score_escalation:{entity}"
+        elif corr_type == "nginx_brute_force":
+            return f"nginx_brute_force:{source_ip}"
+        elif corr_type == "nginx_recon_scanning":
+            return f"nginx_recon_scanning:{source_ip}"
         else:
             entity = source_ip or user or host or "unknown"
             return f"{corr_type}:{entity}"
@@ -212,6 +271,15 @@ class CorrelationService:
         if isinstance(log_classification, dict):
             log_type = log_classification.get("log_type")
 
+        # Extract NGINX HTTP context fields from metadata.
+        # These are populated by the NGINX collector for nginx.access logs.
+        # For all other log sources they resolve to empty strings, which means
+        # the NGINX-specific detectors will not trigger for non-NGINX events.
+        http_method = str(metadata.get("http_method") or "")
+        request_uri = str(metadata.get("request_uri") or "")
+        status_code = str(metadata.get("status_code") or "")
+        user_agent = str(metadata.get("user_agent") or "")
+
         # 3. Build event snapshot
         event_snapshot = {
             "timestamp": now,
@@ -225,6 +293,11 @@ class CorrelationService:
             "risk_score": risk_score,
             "event_fingerprint": fingerprint,
             "log_type": log_type,
+            # NGINX HTTP context (empty strings for non-NGINX sources — safe)
+            "http_method": http_method,
+            "request_uri": request_uri,
+            "status_code": status_code,
+            "user_agent": user_agent,
         }
 
         # 4. Index into caches and purge stale entries
@@ -236,6 +309,7 @@ class CorrelationService:
         matches: list[dict] = []
 
         detectors = [
+            # Existing detectors — preserved exactly, order unchanged
             self._detect_failed_login_burst,
             self._detect_brute_force_success,
             self._detect_multi_host_attack,
@@ -244,6 +318,9 @@ class CorrelationService:
             self._detect_browser_download_exec,
             self._detect_docker_attack_pattern,
             self._detect_risk_score_escalation,
+            # New NGINX detectors — additive only
+            self._detect_nginx_brute_force,
+            self._detect_nginx_recon_scanning,
         ]
 
         for detector in detectors:
@@ -454,6 +531,55 @@ class CorrelationService:
             "event_fingerprint": event_fingerprint,
             "created_at": now,
         }
+
+    # ------------------------------------------------------------------
+    # NGINX Helper Methods
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _is_nginx_auth_failure(snapshot: dict) -> bool:
+        """
+        Returns True if the snapshot represents a failed HTTP authentication event.
+
+        Evaluates HTTP metadata fields (method, uri, status_code) — does NOT
+        depend on the event_type string, so it correctly identifies NGINX
+        authentication failures regardless of how the log is classified.
+
+        Criteria:
+          - status_code == "401"   (HTTP Unauthorized)
+          - http_method == "POST"  (credential submission)
+          - request_uri contains a recognized login endpoint pattern
+        """
+        method = (snapshot.get("http_method") or "").upper()
+        uri = (snapshot.get("request_uri") or "").lower()
+        status = str(snapshot.get("status_code") or "")
+        return (
+            status == "401"
+            and method == "POST"
+            and any(pattern in uri for pattern in _NGINX_LOGIN_URI_PATTERNS)
+        )
+
+    @staticmethod
+    def _is_nginx_suspicious_request(snapshot: dict) -> bool:
+        """
+        Returns True if the snapshot represents a suspicious NGINX request
+        suitable for recon scanning detection.
+
+        Criteria:
+          - source contains "nginx" (ensures only NGINX events are considered)
+          - status_code is in _NGINX_SUSPICIOUS_STATUS_CODES (4xx/5xx)
+          - request_uri starts with a path from _NGINX_RECON_PATHS
+        """
+        source = (snapshot.get("source") or "").lower()
+        if "nginx" not in source:
+            return False
+
+        status = str(snapshot.get("status_code") or "")
+        if status not in _NGINX_SUSPICIOUS_STATUS_CODES:
+            return False
+
+        uri = (snapshot.get("request_uri") or "").lower()
+        return any(uri.startswith(path) for path in _NGINX_RECON_PATHS)
 
     # ------------------------------------------------------------------
     # Detector 1: Failed Login Burst
@@ -958,6 +1084,147 @@ class CorrelationService:
                     f"across {len(window_events)} events within 1 hour"
                 ),
                 related_user=user,
+                related_source_ip=source_ip,
+                related_host=snapshot.get("host"),
+                event_count=len(window_events),
+                first_seen=min(timestamps),
+                last_seen=max(timestamps),
+                event_fingerprint=snapshot.get("event_fingerprint"),
+            )
+
+        return None
+
+    # ------------------------------------------------------------------
+    # Detector 9: NGINX Brute Force
+    # ------------------------------------------------------------------
+
+    def _detect_nginx_brute_force(
+        self, snapshot: dict, now: datetime
+    ) -> dict | None:
+        """
+        Detects: >= NGINX_BRUTE_FORCE_THRESHOLD POST /login 401 responses from
+        the same source IP within NGINX_BRUTE_FORCE_WINDOW.
+
+        Trigger:  _is_nginx_auth_failure(snapshot) returns True
+        Cache:    source_ip_cache[source_ip]
+        Window:   NGINX_BRUTE_FORCE_WINDOW  (default: 5 minutes)
+        Threshold: NGINX_BRUTE_FORCE_THRESHOLD (default: 5 events)
+        Severity: High
+
+        NOTE: This detector operates entirely on HTTP metadata fields
+        (http_method, request_uri, status_code). It does NOT depend on
+        event_type content and therefore correctly detects NGINX brute force
+        attacks that arrive as 'nginx.access' log events.
+
+        Backward compatibility: The existing _detect_failed_login_burst detector
+        (Detector 1) remains completely unchanged. This is a separate detector
+        for a separate signal. There is no overlap because Detector 1 requires
+        'login' AND 'fail' in event_type, which NGINX logs never satisfy.
+        """
+        if not self._is_nginx_auth_failure(snapshot):
+            return None
+
+        source_ip = snapshot.get("source_ip")
+        if not source_ip:
+            return None
+
+        with self._lock:
+            ip_events = self._source_ip_cache.get(source_ip)
+            if not ip_events:
+                return None
+            window_events = self._filter_window(ip_events, now, NGINX_BRUTE_FORCE_WINDOW)
+
+        # Count auth failures from same IP within the window
+        auth_failures = [e for e in window_events if self._is_nginx_auth_failure(e)]
+
+        if len(auth_failures) >= NGINX_BRUTE_FORCE_THRESHOLD:
+            timestamps = [e["timestamp"] for e in auth_failures]
+            return self._build_match(
+                correlation_type="nginx_brute_force",
+                severity="high",
+                confidence=90,
+                risk_score=80,
+                reason=(
+                    f"{len(auth_failures)} HTTP 401 authentication failures from "
+                    f"{source_ip} within "
+                    f"{int(NGINX_BRUTE_FORCE_WINDOW.total_seconds() // 60)} minute(s) "
+                    f"(threshold: {NGINX_BRUTE_FORCE_THRESHOLD})"
+                ),
+                related_user=snapshot.get("user"),
+                related_source_ip=source_ip,
+                related_host=snapshot.get("host"),
+                event_count=len(auth_failures),
+                first_seen=min(timestamps),
+                last_seen=max(timestamps),
+                event_fingerprint=snapshot.get("event_fingerprint"),
+            )
+
+        return None
+
+    # ------------------------------------------------------------------
+    # Detector 10: NGINX Recon Scanning
+    # ------------------------------------------------------------------
+
+    def _detect_nginx_recon_scanning(
+        self, snapshot: dict, now: datetime
+    ) -> dict | None:
+        """
+        Detects: Same source IP requesting >= NGINX_RECON_PATH_THRESHOLD distinct
+        sensitive/administrative paths within NGINX_RECON_WINDOW — a strong
+        indicator of automated reconnaissance or vulnerability scanning.
+
+        Trigger:  _is_nginx_suspicious_request(snapshot) returns True
+        Cache:    source_ip_cache[source_ip]
+        Window:   NGINX_RECON_WINDOW  (default: 10 minutes)
+        Threshold: NGINX_RECON_PATH_THRESHOLD distinct paths (default: 5)
+        Severity: Medium (<10 distinct paths), High (>=10 distinct paths)
+
+        NOTE: This detector operates on HTTP metadata fields and is independent
+        of event_type content. It will not interfere with the existing
+        _detect_reconnaissance detector (Detector 4), which categorizes events
+        by DNS/HTTP/auth/docker categories and fires on >=3 categories.
+        """
+        if not self._is_nginx_suspicious_request(snapshot):
+            return None
+
+        source_ip = snapshot.get("source_ip")
+        if not source_ip:
+            return None
+
+        with self._lock:
+            ip_events = self._source_ip_cache.get(source_ip)
+            if not ip_events:
+                return None
+            window_events = self._filter_window(ip_events, now, NGINX_RECON_WINDOW)
+
+        # Collect distinct sensitive paths probed by this IP within the window
+        distinct_paths: set[str] = set()
+        for e in window_events:
+            uri = (e.get("request_uri") or "").lower()
+            status = str(e.get("status_code") or "")
+            src = (e.get("source") or "").lower()
+            if (
+                "nginx" in src
+                and status in _NGINX_SUSPICIOUS_STATUS_CODES
+                and any(uri.startswith(path) for path in _NGINX_RECON_PATHS)
+            ):
+                distinct_paths.add(uri)
+
+        if len(distinct_paths) >= NGINX_RECON_PATH_THRESHOLD:
+            severity = "high" if len(distinct_paths) >= 10 else "medium"
+            timestamps = [e["timestamp"] for e in window_events]
+            return self._build_match(
+                correlation_type="nginx_recon_scanning",
+                severity=severity,
+                confidence=85,
+                risk_score=85 if severity == "high" else 70,
+                reason=(
+                    f"Reconnaissance scanning detected from {source_ip}: "
+                    f"{len(distinct_paths)} distinct sensitive path(s) probed "
+                    f"within {int(NGINX_RECON_WINDOW.total_seconds() // 60)} minute(s) "
+                    f"(threshold: {NGINX_RECON_PATH_THRESHOLD})"
+                ),
+                related_user=snapshot.get("user"),
                 related_source_ip=source_ip,
                 related_host=snapshot.get("host"),
                 event_count=len(window_events),

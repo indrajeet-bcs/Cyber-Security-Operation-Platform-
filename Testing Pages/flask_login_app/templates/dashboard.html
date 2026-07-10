@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Security Operations Center</title>
+    <!-- Use relative stylesheet path so it routes correctly under NGINX reverse proxy -->
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="dashboard-header">
+            <h2 class="welcome-msg">Welcome, <span>{{ username }}</span></h2>
+            <!-- Logout points to relative logout endpoint -->
+            <a href="logout" class="logout-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                Sign Out
+            </a>
+        </div>
+
+        <div class="header" style="text-align: left; margin-bottom: 25px;">
+            <h1>SOC Environment Status</h1>
+            <p>Monitored applications and environment metric summary.</p>
+        </div>
+
+        <!-- Simulated Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Active Threats</div>
+                <div class="stat-value purple">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Ingested Logs</div>
+                <div class="stat-value cyan">8.4k</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">System Health</div>
+                <div class="stat-value success">99.8%</div>
+            </div>
+        </div>
+
+        <!-- Connection Details for the simulated application -->
+        <div class="status-list">
+            <div class="status-item">
+                <span class="status-label">Application Name</span>
+                <span class="status-indicator">LoginApp</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Port Association</span>
+                <span class="status-indicator">8080</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Upstream Proxy</span>
+                <span class="status-indicator"><span class="dot pulse"></span>Active (NGINX)</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Database Connection</span>
+                <span class="status-indicator"><span class="dot"></span>Online (PostgreSQL)</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

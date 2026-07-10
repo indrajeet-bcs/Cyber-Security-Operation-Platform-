@@ -1,0 +1,14 @@
+{
+  "C:\\Bestowal Projects\\Cyber-Security-Operation-Platform-\\backend\\127.0.0.1 - - [03\\Jul\\2026:15:39:38 +0530] \"GET \\ HTTP\\1.1\" 304 0 \"-\" \"Mozilla\\5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\537.36 (KHTML, like Gecko) Chrome\\148.0.0.0 Safari\\537.36\" \"-\"127.0.0.1 - - [03\\Jul\\2026:15:39:39 +0530] \"GET \\ HTTP\\1.1\" 304 0 \"-\" \"Mozilla\\5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\\537.36 (KHTML, like Gecko) Chrome\\148.0.0.0 Safari\\537.36\" \"-\"": {
+    "offset": 0,
+    "inode": 0
+  },
+  "C:\\Bestowal Projects\\nginx-1.28.0\\nginx-1.28.0\\logs\\access.log": {
+    "offset": 1329,
+    "inode": 6755399441094896
+  },
+  "C:\\Bestowal Projects\\nginx-1.28.0\\nginx-1.28.0\\logs\\error.log": {
+    "offset": 0,
+    "inode": 73183493944798921
+  }
+}

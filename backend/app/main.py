@@ -39,6 +39,7 @@ async def shutdown():
     logger.info("Escalation background scheduler stopped")
 
 
+# Trigger reload to load .env settings
 @app.get("/health")
 async def health():
     return {"status": "ok"} 
