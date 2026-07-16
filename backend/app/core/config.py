@@ -19,5 +19,10 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+    def __init__(self, **values):
+        super().__init__(**values)
+        if self.database_url and self.database_url.startswith("postgres://"):
+            self.database_url = self.database_url.replace("postgres://", "postgresql://", 1)
+
 
 settings = Settings()

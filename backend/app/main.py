@@ -30,8 +30,12 @@ def initialize_database():
     import psycopg2
     logger.info("[DB] Starting automatic database schema initialization...")
     try:
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        schema_path = os.path.join(base_dir, "database", "schema.sql")
+        app_dir = os.path.dirname(os.path.abspath(__file__))
+        schema_path = os.path.join(app_dir, "database", "schema.sql")
+        
+        if not os.path.exists(schema_path):
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            schema_path = os.path.join(base_dir, "database", "schema.sql")
         
         if not os.path.exists(schema_path):
             logger.warning(f"[DB] Schema file not found at {schema_path}, skipping auto-init.")
