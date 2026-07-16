@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// Use VITE_API_BASE_URL env variable if set, otherwise fall back to the deployed backend.
-// For local development, the Vite proxy in vite.config.ts handles /api → localhost:8000.
+// Automatically use the Vite dev proxy (/api -> localhost:8000) during local development.
+// In production, fallback to the deployed Render backend URL.
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  'https://cyber-security-backend-3o19.onrender.com/api';
+  (import.meta.env.DEV ? '/api' : 'https://cyber-security-backend-3o19.onrender.com/api');
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
