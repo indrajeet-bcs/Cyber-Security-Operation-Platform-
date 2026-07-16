@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.api.routes import auth, logs, incident_routes
@@ -6,6 +7,15 @@ from app.core.config import settings
 from app.utils.logger import logger
 
 app = FastAPI(title=settings.app_name, debug=settings.debug)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(logs.router, prefix="/api")
