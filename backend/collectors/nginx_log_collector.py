@@ -33,6 +33,14 @@ from datetime import datetime, timezone
 
 import requests
 
+# ─── Windows console UTF-8 fix ───────────────────────────────────────────────
+# Prevents UnicodeEncodeError when printing Unicode characters (→ — • etc.)
+# to the default cp1252 Windows console. Python 3.7+ supports reconfigure().
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 # ─── watchdog import ─────────────────────────────────────────────────────────
 try:
     from watchdog.events import FileSystemEventHandler
@@ -49,7 +57,7 @@ logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 logger = logging.getLogger("NginxCollector")
 
 # ─── Backend Configuration ───────────────────────────────────────────────────
-BACKEND_URL = "http://127.0.0.1:8000/api/logs"
+BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000/api/logs")
 REQUEST_TIMEOUT = 5  # seconds per POST request
 
 # ─── Retry / Backoff Configuration ──────────────────────────────────────────
@@ -411,6 +419,32 @@ class NginxLogCollector:
                 sname = app.get("server_name")   or "—"
                 print(f"    • {app['name']:<22}  port={port:<8}  server_name={sname}")
         print()
+
+        # ── Startup Catch-Up Replay ──────────────────────────────────────────
+        # After loading offsets, immediately process any log files that have
+        # unread bytes (stored_offset < current_size). This handles the case
+        # where the collector was stopped while Nginx kept writing, or when
+        # the offset file was manually reset to replay historical entries.
+        # Without this, the collector would silently wait for the next OS
+        # file-change event before processing already-existing log lines.
+        print("[*] Startup Catch-Up: checking for unread log content...")
+        for log_path in self.monitored_logs:
+            abs_path = os.path.abspath(log_path)
+            if not os.path.exists(abs_path):
+                continue
+            stored_offset = self.offsets.get(abs_path, {}).get("offset", 0)
+            current_size  = os.path.getsize(abs_path)
+            if current_size > stored_offset:
+                log_name = os.path.basename(abs_path)
+                unread   = current_size - stored_offset
+                print(
+                    f"[*] Catch-Up: {unread:,} unread bytes in {log_name} "
+                    f"(offset {stored_offset:,} of {current_size:,}). Processing now..."
+                )
+                self._process_file(abs_path)
+            else:
+                log_name = os.path.basename(abs_path)
+                print(f"[+] Catch-Up: {log_name} is up-to-date (no unread bytes).")
 
     # ── Log Rotation Detection ────────────────────────────────────────────────
 
@@ -878,6 +912,14 @@ class NginxLogCollector:
                 (parsed["host"] == app["server_name"]  OR
                  parsed["server_name"] == app["server_name"])
 
+            combined_fallback (third criterion):
+                Log line uses Standard Combined Format (no upstream_addr or
+                http_host fields — both are None). In this case the line
+                originated from this Nginx instance and we cannot determine
+                the destination app from the log alone. The line is forwarded
+                to the first configured application as a best-effort match so
+                valid traffic is never silently discarded due to format limits.
+
         Returns:
             The matched application dict  (line is forwarded, metadata annotated).
             None                          (line is discarded — no match found).
@@ -893,6 +935,9 @@ class NginxLogCollector:
         parsed_port  = parsed.get("upstream_port")                    # e.g. "8080"
         parsed_host  = (parsed.get("host")        or "").lower()      # e.g. "hr.company.com"
         parsed_sname = (parsed.get("server_name") or "").lower()
+
+        # Whether this line is from Standard Combined format (no upstream/host info)
+        is_combined_format = (parsed_port is None) and (not parsed_host) and (not parsed_sname)
 
         for app in self.monitored_applications:
             app_port  = app.get("upstream_port")
@@ -910,6 +955,17 @@ class NginxLogCollector:
 
             if port_match or host_match:
                 return app   # First-match wins
+
+        # Combined-format fallback: log line carries no upstream/host info
+        # (Standard Combined format). Forward to the first configured app so
+        # logs from a single-server setup are never silently dropped.
+        if is_combined_format and self.monitored_applications:
+            fallback_app = self.monitored_applications[0]
+            print(
+                f"[~] Combined-Format Fallback: no upstream/host in log line — "
+                f"forwarding to app '{fallback_app['name']}' (best-effort match)"
+            )
+            return fallback_app
 
         return None   # No application matched — line will be discarded
 
@@ -933,7 +989,7 @@ class NginxLogCollector:
             uri        = parsed.get("request_uri") or "/"
             status     = parsed.get("status_code") or "?"
             host_label = parsed.get("host")        or self.host_name
-            message    = f"NGINX {method} {uri} → {status} [{host_label}]"
+            message    = f"NGINX {method} {uri} -> {status} [{host_label}]"
             event_type = "nginx.access"
 
         metadata = {

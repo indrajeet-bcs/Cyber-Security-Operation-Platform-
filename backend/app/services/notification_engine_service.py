@@ -361,6 +361,8 @@ class NotificationEngineService:
             
             # Level 1 escalation check
             if escalation_level == 0:
+                if policy.get("escalation_role") is None or policy.get("escalation_minutes") is None:
+                    continue
                 esc_time = created_at_utc + timedelta(minutes=policy["escalation_minutes"])
                 if now >= esc_time:
                     if not notification_repository.has_escalation_event(notification["notification_id"], 1):
@@ -388,6 +390,8 @@ class NotificationEngineService:
                         
             # Level 2 escalation check
             elif escalation_level == 1:
+                if policy.get("second_escalation_role") is None or policy.get("second_escalation_minutes") is None:
+                    continue
                 esc_time = created_at_utc + timedelta(minutes=policy["second_escalation_minutes"])
                 if now >= esc_time:
                     if not notification_repository.has_escalation_event(notification["notification_id"], 2):

@@ -22,6 +22,85 @@ class LogService:
         self._logs: dict[int, LogResponse] = {}
         self._next_id = 1
 
+    def load_logs_from_db(self) -> None:
+        """Loads historical logs from PostgreSQL into the in-memory cache on startup."""
+        from app.database.connection import get_connection
+        from app.schemas.log import DetectionResult, LogResponse
+        import json
+        
+        logger.info("[LogService] Loading historical logs from PostgreSQL into RAM...")
+        try:
+            with get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT 
+                        id, source, host, event_type, message, severity, timestamp, 
+                        source_ip, user_name, metadata, is_suspicious, 
+                        detection_severity, detection_reason, ingested_at, record_number 
+                    FROM logs
+                    ORDER BY id ASC;
+                """)
+                rows = cursor.fetchall()
+                
+                loaded_count = 0
+                max_id = 0
+                for row in rows:
+                    (
+                        log_id, source, host, event_type, message, severity, timestamp,
+                        source_ip, user_name, metadata_raw, is_suspicious,
+                        detection_severity, detection_reason, ingested_at, record_number_raw
+                    ) = row
+                    
+                    # Deserialize metadata
+                    if isinstance(metadata_raw, str):
+                        try:
+                            metadata = json.loads(metadata_raw)
+                        except Exception:
+                            metadata = {}
+                    elif isinstance(metadata_raw, dict):
+                        metadata = metadata_raw
+                    else:
+                        metadata = {}
+
+                    # Parse record_number
+                    try:
+                        record_number = int(record_number_raw) if record_number_raw is not None else None
+                    except (ValueError, TypeError):
+                        record_number = None
+
+                    detection = None
+                    if is_suspicious is not None or detection_severity is not None or detection_reason is not None:
+                        detection = DetectionResult(
+                            is_suspicious=bool(is_suspicious),
+                            severity=detection_severity or "info",
+                            reason=detection_reason
+                        )
+
+                    log_res = LogResponse(
+                        id=log_id,
+                        source=source or "unknown",
+                        host=host,
+                        event_type=event_type or "unknown",
+                        message=message or "",
+                        severity=severity or "info",
+                        timestamp=timestamp,
+                        source_ip=source_ip,
+                        user=user_name,
+                        metadata=metadata,
+                        ingested_at=ingested_at,
+                        detection=detection,
+                        record_number=record_number
+                    )
+                    self._logs[log_id] = log_res
+                    max_id = max(max_id, log_id)
+                    loaded_count += 1
+                
+                if loaded_count > 0:
+                    self._next_id = max_id + 1
+                logger.info(f"[LogService] Successfully loaded {loaded_count} logs from PostgreSQL. Next Log ID: {self._next_id}")
+        except Exception as exc:
+            logger.error(f"[LogService] Failed to load logs from database on startup: {exc}")
+
     def list_logs(self, skip: int = 0, limit: int = 100) -> list[LogResponse]:
         ordered = sorted(self._logs.values(), key=lambda log: log.id, reverse=True)
         return ordered[skip : skip + limit]

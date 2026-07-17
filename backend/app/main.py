@@ -129,6 +129,11 @@ def _seed_defaults(cursor):
 async def startup():
     logger.info("SOC Platform API started")
     initialize_database()
+    
+    # Load historical logs from PostgreSQL into RAM cache
+    from app.services.log_service import log_service
+    log_service.load_logs_from_db()
+    
     from app.database.notification_repository import validate_schema
     validate_schema()
     

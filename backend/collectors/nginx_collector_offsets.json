@@ -12,11 +12,11 @@
     "inode": 73183493944798921
   },
   "C:\\Users\\BCS\\Downloads\\nginx-1.28.3\\nginx-1.28.3\\logs\\access.log": {
-    "offset": 1021,
+    "offset": 1153,
     "inode": 2814749767292266
   },
   "C:\\Users\\BCS\\Downloads\\nginx-1.28.3\\nginx-1.28.3\\logs\\error.log": {
-    "offset": 2802,
+    "offset": 6924,
     "inode": 19140298416383615
   }
 }
