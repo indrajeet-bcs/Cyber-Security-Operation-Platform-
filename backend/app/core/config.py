@@ -1,14 +1,14 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     app_name: str = "SOC Platform"
     debug: bool = False
-    database_url: str = "postgresql://postgres:root@localhost:5432/soc_platform"
-    secret_key: str = "change-me-in-production"
+
+    database_url: str
+    secret_key: str
     access_token_expire_minutes: int = 30
 
-    # SMTP / Email Configuration
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587
     smtp_user: str = ""
@@ -16,13 +16,16 @@ class Settings(BaseSettings):
     smtp_from_email: str = ""
     smtp_use_tls: bool = True
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")
 
     def __init__(self, **values):
         super().__init__(**values)
-        if self.database_url and self.database_url.startswith("postgres://"):
-            self.database_url = self.database_url.replace("postgres://", "postgresql://", 1)
+        if self.database_url.startswith("postgres://"):
+            self.database_url = self.database_url.replace(
+                "postgres://",
+                "postgresql://",
+                1,
+            )
 
 
 settings = Settings()
