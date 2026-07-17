@@ -10,5 +10,13 @@
   "C:\\Bestowal Projects\\nginx-1.28.0\\nginx-1.28.0\\logs\\error.log": {
     "offset": 0,
     "inode": 73183493944798921
+  },
+  "C:\\Users\\BCS\\Downloads\\nginx-1.28.3\\nginx-1.28.3\\logs\\access.log": {
+    "offset": 1021,
+    "inode": 2814749767292266
+  },
+  "C:\\Users\\BCS\\Downloads\\nginx-1.28.3\\nginx-1.28.3\\logs\\error.log": {
+    "offset": 2802,
+    "inode": 19140298416383615
   }
 }

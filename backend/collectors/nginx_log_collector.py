@@ -69,8 +69,8 @@ OFFSET_FILE = os.path.join(
 # Windows example:  r"C:\nginx\logs\access.log"
 # Linux example:    "/var/log/nginx/access.log"
 MONITORED_LOGS = [
-    r"C:\Bestowal Projects\nginx-1.28.0\nginx-1.28.0\logs\access.log",
-    r"C:\Bestowal Projects\nginx-1.28.0\nginx-1.28.0\logs\error.log",
+    r"C:\Users\BCS\Downloads\nginx-1.28.3\nginx-1.28.3\logs\access.log",
+    r"C:\Users\BCS\Downloads\nginx-1.28.3\nginx-1.28.3\logs\error.log",
 ]
 # ─── Application Filter Configuration ────────────────────────────────────────
 # Each entry defines ONE monitored application.

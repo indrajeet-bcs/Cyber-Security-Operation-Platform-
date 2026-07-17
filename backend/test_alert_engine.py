@@ -16,6 +16,7 @@ class TestAlertEngine(unittest.TestCase):
 
     def test_alert_lifecycle(self):
         # 1. Create alert
+
         record_id = alert_repository.create_alert(
             alert_id=f"ALT-{datetime.now().timestamp()}-TEST",
             alert_title="Test Lifecycle Alert",
@@ -68,6 +69,7 @@ class TestAlertEngine(unittest.TestCase):
         self.assertIsNotNone(alert["closed_at"])
  
     def test_alert_resolve(self):
+        
         record_id = alert_repository.create_alert(
             alert_id=f"ALT-{datetime.now().timestamp()}-TEST2",
             alert_title="Test Resolve Alert",
