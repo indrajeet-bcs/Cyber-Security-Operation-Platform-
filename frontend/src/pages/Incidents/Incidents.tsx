@@ -19,24 +19,27 @@ import {
   TableSortLabel,
   TablePagination,
   Paper,
-  Chip,
   Button,
   IconButton,
   Tooltip,
-  Skeleton,
-  Alert,
   Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Search as SearchIcon,
   Visibility as ViewIcon,
   AssignmentInd as TakeIcon,
   Clear as ClearIcon,
+  Autorenew as AutoRenewIcon,
 } from '@mui/icons-material';
 
 import { useIncidents, useAssignIncident } from '../../hooks/queries';
-import { theme } from '../../theme';
 import type { Incident, IncidentStatus, Severity } from '../../types';
+import SeverityBadge from '../../components/SeverityBadge';
+import StatusChip from '../../components/StatusChip';
+import LoadingState from '../../components/LoadingState';
+import ErrorState from '../../components/ErrorState';
+import EmptyState from '../../components/EmptyState';
 
 export default function Incidents() {
   const navigate = useNavigate();
@@ -52,6 +55,9 @@ export default function Incidents() {
   const [orderBy, setOrderBy] = useState<keyof Incident>('created_at');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
+  // Auto-refresh state (10s default or false)
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState<number | undefined>(10000);
+
   // Snackbar Notification State
   const [toast, setToast] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
@@ -60,7 +66,7 @@ export default function Incidents() {
   });
 
   // Queries & Mutations
-  const { data: incidents, isLoading, isError } = useIncidents(statusFilter, severityFilter);
+  const { data: incidents, isLoading, isError, error, refetch, isRefetching } = useIncidents(statusFilter, severityFilter, autoRefreshInterval);
   const assignMutation = useAssignIncident();
 
   // ----------------------------------------------------
@@ -133,39 +139,42 @@ export default function Incidents() {
     page * rowsPerPage + rowsPerPage
   );
 
-  // ----------------------------------------------------
-  // Color Styling Helpers
-  // ----------------------------------------------------
-  const getSeverityColor = (severity: string) => {
-    switch (severity.toLowerCase()) {
-      case 'critical': return theme.palette.severity.critical;
-      case 'high': return theme.palette.severity.high;
-      case 'medium': return theme.palette.severity.medium;
-      case 'low': return theme.palette.severity.low;
-      default: return theme.palette.text.secondary;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open': return theme.palette.status.open;
-      case 'acknowledged': return theme.palette.status.acknowledged;
-      case 'investigating': return theme.palette.status.investigating;
-      case 'closed': return theme.palette.status.closed;
-      default: return theme.palette.text.secondary;
-    }
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
-      {/* Page Title */}
-      <Box>
-        <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', mb: 0.5 }}>
-          Incident Investigation Queue
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
-          Assign owner, sort, filter, and escalate active cybersecurity threats.
-        </Typography>
+      {/* Page Title & Controls */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', mb: 0.5 }}>
+            Incident Investigation Queue
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+            Assign owner, sort, filter, and escalate active cybersecurity threats.
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Button
+            variant={autoRefreshInterval ? "contained" : "outlined"}
+            color={autoRefreshInterval ? "primary" : "inherit"}
+            startIcon={<AutoRenewIcon className={isRefetching ? 'spin' : ''} />}
+            onClick={() => setAutoRefreshInterval(prev => prev ? undefined : 10000)}
+            sx={{ 
+              borderRadius: 2, 
+              textTransform: 'none',
+              ...(autoRefreshInterval ? {} : { color: '#9CA3AF', borderColor: '#4B5563' })
+            }}
+          >
+            {autoRefreshInterval ? 'Auto-Refresh: ON (10s)' : 'Auto-Refresh: OFF'}
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => refetch()}
+            disabled={isRefetching}
+            sx={{ borderRadius: 2, textTransform: 'none', color: '#F3F4F6', borderColor: '#4B5563' }}
+          >
+            Manual Refresh
+          </Button>
+        </Box>
       </Box>
 
       {/* Filters Card */}
@@ -261,9 +270,7 @@ export default function Incidents() {
       {/* Incidents Table */}
       <Card sx={{ border: '1px solid #1F2937' }}>
         {isError ? (
-          <Box sx={{ p: 4 }}>
-            <Alert severity="error">Failed to fetch incidents. Make sure backend is running.</Alert>
-          </Box>
+          <ErrorState message="Failed to fetch incidents." error={error} onRetry={() => refetch()} />
         ) : (
           <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
             <Table>
@@ -279,8 +286,6 @@ export default function Incidents() {
                       Incident ID
                     </TableSortLabel>
                   </TableCell>
-                  {/* Title */}
-                  <TableCell>Title</TableCell>
                   {/* Severity */}
                   <TableCell>
                     <TableSortLabel
@@ -301,8 +306,10 @@ export default function Incidents() {
                       Status
                     </TableSortLabel>
                   </TableCell>
-                  {/* Assigned To */}
-                  <TableCell>Assigned Analyst</TableCell>
+                  {/* Detection Reason */}
+                  <TableCell>Detection Reason</TableCell>
+                  {/* Source */}
+                  <TableCell>Source</TableCell>
                   {/* Created Time */}
                   <TableCell>
                     <TableSortLabel
@@ -320,23 +327,22 @@ export default function Incidents() {
               
               <TableBody>
                 {isLoading ? (
-                  Array.from({ length: rowsPerPage }).map((_, i) => (
-                    <TableRow key={i}>
-                      {Array.from({ length: 7 }).map((_, j) => (
-                        <TableCell key={j}><Skeleton height={20} /></TableCell>
-                      ))}
-                    </TableRow>
-                  ))
+                  <TableRow>
+                    <TableCell colSpan={7} sx={{ p: 0 }}>
+                      <LoadingState message="Loading incidents..." />
+                    </TableCell>
+                  </TableRow>
                 ) : paginatedIncidents.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 8, color: '#9CA3AF' }}>
-                      No active incidents matching the current search parameters.
+                    <TableCell colSpan={7} sx={{ p: 0 }}>
+                      <EmptyState message="No incidents matching criteria." />
                     </TableCell>
                   </TableRow>
                 ) : (
                   paginatedIncidents.map((incident: Incident) => (
                     <TableRow
                       key={incident.id}
+                      hover
                       onClick={() => navigate(`/incident/${incident.incident_id}`)}
                       sx={{ cursor: 'pointer' }}
                     >
@@ -344,52 +350,21 @@ export default function Incidents() {
                       <TableCell sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#3B82F6' }}>
                         {incident.incident_id}
                       </TableCell>
-                      {/* Title */}
-                      <TableCell sx={{ fontWeight: 500 }}>
-                        {incident.title}
-                      </TableCell>
                       {/* Severity */}
                       <TableCell>
-                        <Chip
-                          label={incident.severity}
-                          size="small"
-                          sx={{
-                            backgroundColor: `${getSeverityColor(incident.severity)}18`,
-                            color: getSeverityColor(incident.severity),
-                            border: `1px solid ${getSeverityColor(incident.severity)}40`,
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                          }}
-                        />
+                        <SeverityBadge severity={incident.severity} />
                       </TableCell>
                       {/* Status */}
                       <TableCell>
-                        <Chip
-                          label={incident.status}
-                          size="small"
-                          sx={{
-                            backgroundColor: `${getStatusColor(incident.status)}18`,
-                            color: getStatusColor(incident.status),
-                            border: `1px solid ${getStatusColor(incident.status)}40`,
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                          }}
-                        />
+                        <StatusChip status={incident.status} />
                       </TableCell>
-                      {/* Assigned Analyst */}
-                      <TableCell>
-                        {incident.assigned_to ? (
-                          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                            <Typography variant="body2">{incident.assigned_to}</Typography>
-                            <Typography variant="caption" sx={{ color: '#9CA3AF', backgroundColor: '#1E293B', px: 0.5, borderRadius: '4px' }}>
-                              {incident.assigned_role}
-                            </Typography>
-                          </Box>
-                        ) : (
-                          <Typography variant="body2" sx={{ color: '#6B7280', fontStyle: 'italic' }}>
-                            Unassigned
-                          </Typography>
-                        )}
+                      {/* Detection Reason */}
+                      <TableCell sx={{ fontWeight: 500 }}>
+                        {incident.title}
+                      </TableCell>
+                      {/* Source */}
+                      <TableCell sx={{ color: '#D1D5DB' }}>
+                        {incident.alert?.source || 'System'}
                       </TableCell>
                       {/* Created Time */}
                       <TableCell sx={{ color: '#9CA3AF' }}>
@@ -459,6 +434,16 @@ export default function Incidents() {
           {toast.message}
         </Alert>
       </Snackbar>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .spin {
+          animation: spin 1s linear infinite;
+        }
+      `}</style>
     </Box>
   );
 }

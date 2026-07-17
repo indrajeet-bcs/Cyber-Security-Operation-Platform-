@@ -8,6 +8,9 @@ import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Incidents from './pages/Incidents/Incidents';
 import IncidentDetails from './pages/IncidentDetails/IncidentDetails';
+import Logs from './pages/Logs/Logs';
+import Alerts from './pages/Alerts/Alerts';
+import Investigations from './pages/Investigations/Investigations';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -29,10 +32,16 @@ export default function App() {
             <Route path="/" element={<Layout />}>
               {/* Dashboard page */}
               <Route index element={<Dashboard />} />
+              {/* Raw logs page */}
+              <Route path="logs" element={<Logs />} />
               {/* Incident queue table */}
               <Route path="incidents" element={<Incidents />} />
               {/* Incident Details and actions */}
               <Route path="incident/:incidentId" element={<IncidentDetails />} />
+              {/* Alerts status placeholder */}
+              <Route path="alerts" element={<Alerts />} />
+              {/* Investigations threat hunting simulator */}
+              <Route path="investigations" element={<Investigations />} />
               {/* Fallback redirect */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

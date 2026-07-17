@@ -19,7 +19,6 @@ import {
   ListItem,
   ListItemText,
   Paper,
-  Skeleton,
   Alert,
   Snackbar,
   Accordion,
@@ -39,7 +38,10 @@ import {
 } from '@mui/icons-material';
 
 import { useIncident, useAssignIncident, useAddNote, useCloseIncident } from '../../hooks/queries';
-import { theme } from '../../theme';
+import SeverityBadge from '../../components/SeverityBadge';
+import StatusChip from '../../components/StatusChip';
+import LoadingState from '../../components/LoadingState';
+import ErrorState from '../../components/ErrorState';
 
 export default function IncidentDetails() {
   const { incidentId } = useParams<{ incidentId: string }>();
@@ -57,35 +59,19 @@ export default function IncidentDetails() {
   });
 
   // Queries & Mutations
-  const { data: incident, isLoading, isError, error } = useIncident(incidentId || '');
+  const { data: incident, isLoading, isError, error, refetch } = useIncident(incidentId || '');
   const assignMutation = useAssignIncident();
   const noteMutation = useAddNote();
   const closeMutation = useCloseIncident();
 
   if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <Skeleton height={50} width="40%" />
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
-          <Box sx={{ flex: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <Skeleton variant="rectangular" height={200} />
-            <Skeleton variant="rectangular" height={300} />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Skeleton variant="rectangular" height={400} />
-          </Box>
-        </Box>
-      </Box>
-    );
+    return <LoadingState message="Loading incident details..." />;
   }
 
   if (isError || !incident) {
     return (
       <Box sx={{ mt: 4 }}>
-        <Alert severity="error" sx={{ backgroundColor: '#1F1015', border: '1px solid #F87171' }}>
-          Failed to load incident. Ensure the backend FastAPI server is running.
-          {error ? ` Details: ${(error as any).message}` : ''}
-        </Alert>
+        <ErrorState message="Failed to load incident details." error={error} onRetry={() => refetch()} />
         <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/incidents')} sx={{ mt: 2 }}>
           Back to Incidents Queue
         </Button>
@@ -93,55 +79,8 @@ export default function IncidentDetails() {
     );
   }
 
-  // ----------------------------------------------------
-  // Color Styling Helpers
-  // ----------------------------------------------------
-  const getSeverityColor = (severity: string) => {
-    switch (severity.toLowerCase()) {
-      case 'critical': return theme.palette.severity.critical;
-      case 'high': return theme.palette.severity.high;
-      case 'medium': return theme.palette.severity.medium;
-      case 'low': return theme.palette.severity.low;
-      default: return theme.palette.text.secondary;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open': return theme.palette.status.open;
-      case 'acknowledged': return theme.palette.status.acknowledged;
-      case 'investigating': return theme.palette.status.investigating;
-      case 'closed': return theme.palette.status.closed;
-      default: return theme.palette.text.secondary;
-    }
-  };
-
   // Split newline appended notes for history listing
   const notesList = incident.notes ? incident.notes.split('\n').filter(n => n.trim() !== '') : [];
-
-  // Construct a mocked alert JSON object for the collapsible viewer to display standard alerts columns
-  const mockAlertJSON = {
-    alert_id: incident.alert_id ? `ALT-20260619-${String(incident.alert_id).padStart(4, '0')}` : 'ALT-EXTERNAL',
-    alert_title: incident.title,
-    severity: incident.severity,
-    status: incident.status === 'closed' ? 'closed' : 'open',
-    source_ip: '192.168.10.45',
-    host: 'soc-agent-node-01',
-    user_name: incident.assigned_to || 'system',
-    risk_score: incident.severity === 'critical' ? 95 : incident.severity === 'high' ? 80 : 50,
-    confidence: 85,
-    event_type: 'suspicious_activity',
-    rule_matches: [
-      {
-        rule_code: 'SIG_0042',
-        rule_name: incident.title,
-        severity: incident.severity,
-        risk_score: incident.severity === 'critical' ? 95 : 50,
-      }
-    ],
-    correlation_matches: [],
-    created_at: incident.created_at,
-  };
 
   // ----------------------------------------------------
   // Handler Submissions
@@ -229,26 +168,8 @@ export default function IncidentDetails() {
             <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', fontFamily: 'monospace' }}>
               {incident.incident_id}
             </Typography>
-            <Chip
-              label={incident.status}
-              sx={{
-                backgroundColor: `${getStatusColor(incident.status)}18`,
-                color: getStatusColor(incident.status),
-                border: `1px solid ${getStatusColor(incident.status)}40`,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-              }}
-            />
-            <Chip
-              label={incident.severity}
-              sx={{
-                backgroundColor: `${getSeverityColor(incident.severity)}18`,
-                color: getSeverityColor(incident.severity),
-                border: `1px solid ${getSeverityColor(incident.severity)}40`,
-                fontWeight: 700,
-                textTransform: 'uppercase',
-              }}
-            />
+            <StatusChip status={incident.status} />
+            <SeverityBadge severity={incident.severity} />
           </Box>
           <Typography variant="h5" sx={{ fontWeight: 600, color: '#E5E7EB', mb: 0.5 }}>
             {incident.title}
@@ -274,7 +195,7 @@ export default function IncidentDetails() {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <CodeIcon sx={{ color: '#3B82F6' }} />
                 <Typography sx={{ fontWeight: 700, color: '#F3F4F6' }}>
-                  Raw Alert JSON Inspector
+                  Detection Result & Original Log Inspector
                 </Typography>
               </Box>
             </AccordionSummary>
@@ -294,7 +215,7 @@ export default function IncidentDetails() {
                   overflowX: 'auto',
                 }}
               >
-                {JSON.stringify(mockAlertJSON, null, 2)}
+                {JSON.stringify(incident.alert || { message: "No alert payload associated." }, null, 2)}
               </Paper>
             </AccordionDetails>
           </Accordion>
@@ -305,7 +226,7 @@ export default function IncidentDetails() {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
                 <CommentIcon sx={{ color: '#3B82F6' }} />
                 <Typography variant="h6" sx={{ fontWeight: 700, color: '#F3F4F6' }}>
-                  Analyst Log & Notes
+                  Analyst Log & Notes (Timeline & Resolution)
                 </Typography>
               </Box>
               
@@ -456,7 +377,7 @@ export default function IncidentDetails() {
           <Card>
             <CardContent sx={{ p: 2.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#F3F4F6' }}>
-                Incident Details
+                Metadata
               </Typography>
               
               <Divider sx={{ mb: 2 }} />

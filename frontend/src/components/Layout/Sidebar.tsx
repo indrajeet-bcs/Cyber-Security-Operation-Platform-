@@ -19,6 +19,7 @@ import {
   Security as SecurityIcon,
   Settings as SettingsIcon,
   Shield as ShieldIcon,
+  Storage as DatabaseIcon,
 } from '@mui/icons-material';
 
 const DRAWER_WIDTH = 260;
@@ -26,9 +27,10 @@ const DRAWER_WIDTH = 260;
 export default function Sidebar() {
   const navItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/', active: true },
+    { text: 'Logs', icon: <DatabaseIcon />, path: '/logs', active: true },
     { text: 'Incident Queue', icon: <WarningIcon />, path: '/incidents', active: true },
-    { text: 'Alerts', icon: <NotificationsIcon />, path: '/alerts', active: false },
-    { text: 'Investigations', icon: <SearchIcon />, path: '/investigations', active: false },
+    { text: 'Alerts', icon: <NotificationsIcon />, path: '/alerts', active: true },
+    { text: 'Investigations', icon: <SearchIcon />, path: '/investigations', active: true },
     { text: 'Threat Intel', icon: <SecurityIcon />, path: '/intel', active: false },
     { text: 'Settings', icon: <SettingsIcon />, path: '/settings', active: false },
   ];
