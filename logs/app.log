@@ -28873,3 +28873,143 @@ TypeError: Object of type datetime is not JSON serializable
 2026-07-16 18:24:14,547 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-16 18:25:14 IST)" (scheduled at 2026-07-16 18:24:14.538630+05:30)
 2026-07-16 18:24:14,553 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-16 18:25:14 IST)" executed successfully
 >>>>>>> 26c8673 ( updating env file for render deployment)
+2026-07-17 15:11:18,336 | INFO | soc_platform | SOC Platform API started
+2026-07-17 15:11:18,337 | INFO | soc_platform | [DB] Starting automatic database schema initialization...
+2026-07-17 15:11:18,504 | INFO | soc_platform | [DB] Database schema initialized successfully.
+2026-07-17 15:11:18,775 | ERROR | soc_platform | [ERROR] Notification schema validation failed
+2026-07-17 15:11:18,824 | INFO | apscheduler.scheduler | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-07-17 15:11:18,841 | INFO | apscheduler.scheduler | Added job "NotificationEngineService.check_and_trigger_escalations" to job store "default"
+2026-07-17 15:11:18,868 | INFO | apscheduler.scheduler | Scheduler started
+2026-07-17 15:11:18,874 | INFO | soc_platform | Escalation background scheduler started
+2026-07-17 15:12:18,827 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:13:18 IST)" (scheduled at 2026-07-17 15:12:18.824015+05:30)
+2026-07-17 15:12:18,869 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:13:18 IST)" executed successfully
+2026-07-17 15:13:18,826 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:14:18 IST)" (scheduled at 2026-07-17 15:13:18.824015+05:30)
+2026-07-17 15:13:18,830 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:14:18 IST)" executed successfully
+2026-07-17 15:14:18,826 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:15:18 IST)" (scheduled at 2026-07-17 15:14:18.824015+05:30)
+2026-07-17 15:14:18,830 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:15:18 IST)" executed successfully
+2026-07-17 15:15:18,836 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:16:18 IST)" (scheduled at 2026-07-17 15:15:18.824015+05:30)
+2026-07-17 15:15:18,840 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:16:18 IST)" executed successfully
+2026-07-17 15:16:18,832 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:17:18 IST)" (scheduled at 2026-07-17 15:16:18.824015+05:30)
+2026-07-17 15:16:18,836 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:17:18 IST)" executed successfully
+2026-07-17 15:17:18,827 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:18:18 IST)" (scheduled at 2026-07-17 15:17:18.824015+05:30)
+2026-07-17 15:17:18,830 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:18:18 IST)" executed successfully
+2026-07-17 15:17:46,066 | WARNING | soc_platform | [WARNING] Validation warnings detected: source=nginx warnings=['Non-standard severity value']
+2026-07-17 15:17:46,066 | INFO | soc_platform | [INFO] Parsing started
+2026-07-17 15:17:46,069 | INFO | soc_platform | [INFO] Parsing completed — format=text confidence=0.30 decodings=[]
+2026-07-17 15:17:46,070 | INFO | soc_platform | [INFO] Log type detection started
+2026-07-17 15:17:46,072 | WARNING | soc_platform | [WARNING] Unknown log type detected
+2026-07-17 15:17:46,100 | INFO | soc_platform | [DB] Unknown log stored — source=nginx collector=nginx_collector hash=320d47d62fdc4fbb9ec4ba06ae72b24ea60d37de71b59561fd4b35e41c097835 id=10
+2026-07-17 15:17:46,102 | INFO | soc_platform | [INFO] Unknown log stored for future analysis
+2026-07-17 15:17:46,103 | INFO | soc_platform | [INFO] Rule Engine Started
+2026-07-17 15:17:46,110 | INFO | soc_platform | [RuleRepository] Loaded 1 enabled rules from database.
+2026-07-17 15:17:46,110 | INFO | soc_platform | [RuleEngine] Loaded 1 enabled rules.
+2026-07-17 15:17:46,111 | INFO | soc_platform | [INFO] Rule Evaluation Complete — 0 rule(s) matched for source=nginx
+2026-07-17 15:17:46,112 | INFO | soc_platform | [INFO] Correlation Engine Started
+2026-07-17 15:17:46,112 | INFO | soc_platform | [INFO] Correlation Engine Complete — 0 correlation(s) detected for source=nginx user=None source_ip=None
+2026-07-17 15:17:46,118 | INFO | soc_platform | [DB] Log inserted into PostgreSQL — source=nginx host=None record_number=None
+2026-07-17 15:17:47,363 | WARNING | soc_platform | [WARNING] Validation warnings detected: source=nginx warnings=['Non-standard severity value']
+2026-07-17 15:17:47,364 | INFO | soc_platform | [INFO] Parsing started
+2026-07-17 15:17:47,364 | INFO | soc_platform | [INFO] Parsing completed — format=text confidence=0.30 decodings=[]
+2026-07-17 15:17:47,366 | INFO | soc_platform | [INFO] Log type detection started
+2026-07-17 15:17:47,366 | WARNING | soc_platform | [WARNING] Unknown log type detected
+2026-07-17 15:17:47,375 | INFO | soc_platform | [DB] Incremented occurrence_count for unknown log record id=10
+2026-07-17 15:17:47,380 | INFO | soc_platform | [INFO] Unknown log stored for future analysis
+2026-07-17 15:17:47,381 | INFO | soc_platform | [INFO] Rule Engine Started
+2026-07-17 15:17:47,383 | INFO | soc_platform | [INFO] Rule Evaluation Complete — 0 rule(s) matched for source=nginx
+2026-07-17 15:17:47,390 | INFO | soc_platform | [INFO] Correlation Engine Started
+2026-07-17 15:17:47,391 | INFO | soc_platform | [INFO] Correlation Engine Complete — 0 correlation(s) detected for source=nginx user=None source_ip=None
+2026-07-17 15:17:47,394 | INFO | soc_platform | [DB] Log inserted into PostgreSQL — source=nginx host=None record_number=None
+2026-07-17 15:18:18,829 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:19:18 IST)" (scheduled at 2026-07-17 15:18:18.824015+05:30)
+2026-07-17 15:18:18,837 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:19:18 IST)" executed successfully
+2026-07-17 15:19:18,827 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:20:18 IST)" (scheduled at 2026-07-17 15:19:18.824015+05:30)
+2026-07-17 15:19:18,831 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:20:18 IST)" executed successfully
+2026-07-17 15:20:14,434 | WARNING | soc_platform | [WARNING] Validation warnings detected: source=nginx warnings=['Non-standard severity value']
+2026-07-17 15:20:14,435 | INFO | soc_platform | [INFO] Parsing started
+2026-07-17 15:20:14,436 | INFO | soc_platform | [INFO] Parsing completed — format=text confidence=0.30 decodings=[]
+2026-07-17 15:20:14,436 | INFO | soc_platform | [INFO] Log type detection started
+2026-07-17 15:20:14,437 | WARNING | soc_platform | [WARNING] Unknown log type detected
+2026-07-17 15:20:14,439 | INFO | soc_platform | [DB] Incremented occurrence_count for unknown log record id=10
+2026-07-17 15:20:14,441 | INFO | soc_platform | [INFO] Unknown log stored for future analysis
+2026-07-17 15:20:14,466 | INFO | soc_platform | [INFO] Rule Engine Started
+2026-07-17 15:20:14,467 | INFO | soc_platform | [INFO] Rule Evaluation Complete — 0 rule(s) matched for source=nginx
+2026-07-17 15:20:14,474 | INFO | soc_platform | [INFO] Correlation Engine Started
+2026-07-17 15:20:14,476 | INFO | soc_platform | [INFO] Correlation Engine Complete — 0 correlation(s) detected for source=nginx user=None source_ip=None
+2026-07-17 15:20:14,478 | INFO | soc_platform | [DB] Log inserted into PostgreSQL — source=nginx host=None record_number=None
+2026-07-17 15:20:18,829 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:21:18 IST)" (scheduled at 2026-07-17 15:20:18.824015+05:30)
+2026-07-17 15:20:18,836 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:21:18 IST)" executed successfully
+2026-07-17 15:21:18,835 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:22:18 IST)" (scheduled at 2026-07-17 15:21:18.824015+05:30)
+2026-07-17 15:21:18,839 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:22:18 IST)" executed successfully
+2026-07-17 15:22:18,827 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:23:18 IST)" (scheduled at 2026-07-17 15:22:18.824015+05:30)
+2026-07-17 15:22:18,832 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:23:18 IST)" executed successfully
+2026-07-17 15:23:18,826 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:24:18 IST)" (scheduled at 2026-07-17 15:23:18.824015+05:30)
+2026-07-17 15:23:18,830 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:24:18 IST)" executed successfully
+2026-07-17 15:24:18,830 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:25:18 IST)" (scheduled at 2026-07-17 15:24:18.824015+05:30)
+2026-07-17 15:24:18,833 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:25:18 IST)" executed successfully
+2026-07-17 15:25:18,834 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:26:18 IST)" (scheduled at 2026-07-17 15:25:18.824015+05:30)
+2026-07-17 15:25:18,837 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:26:18 IST)" executed successfully
+2026-07-17 15:26:18,831 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:27:18 IST)" (scheduled at 2026-07-17 15:26:18.824015+05:30)
+2026-07-17 15:26:18,835 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:27:18 IST)" executed successfully
+2026-07-17 15:27:18,826 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:28:18 IST)" (scheduled at 2026-07-17 15:27:18.824015+05:30)
+2026-07-17 15:27:18,830 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:28:18 IST)" executed successfully
+2026-07-17 15:28:18,836 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:29:18 IST)" (scheduled at 2026-07-17 15:28:18.824015+05:30)
+2026-07-17 15:28:18,841 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:29:18 IST)" executed successfully
+2026-07-17 15:29:18,836 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:30:18 IST)" (scheduled at 2026-07-17 15:29:18.824015+05:30)
+2026-07-17 15:29:18,841 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:30:18 IST)" executed successfully
+2026-07-17 15:30:18,830 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:31:18 IST)" (scheduled at 2026-07-17 15:30:18.824015+05:30)
+2026-07-17 15:30:18,835 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:31:18 IST)" executed successfully
+2026-07-17 15:31:18,832 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:32:18 IST)" (scheduled at 2026-07-17 15:31:18.824015+05:30)
+2026-07-17 15:31:18,835 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:32:18 IST)" executed successfully
+2026-07-17 15:32:18,834 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:33:18 IST)" (scheduled at 2026-07-17 15:32:18.824015+05:30)
+2026-07-17 15:32:18,839 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:33:18 IST)" executed successfully
+2026-07-17 15:32:40,812 | INFO | apscheduler.scheduler | Scheduler has been shut down
+2026-07-17 15:32:40,814 | INFO | soc_platform | Escalation background scheduler stopped
+2026-07-17 15:32:44,760 | INFO | soc_platform | SOC Platform API started
+2026-07-17 15:32:44,760 | INFO | soc_platform | [DB] Starting automatic database schema initialization...
+2026-07-17 15:32:44,849 | INFO | soc_platform | [DB] Database schema initialized successfully.
+2026-07-17 15:32:44,858 | INFO | soc_platform | [LogService] Loading historical logs from PostgreSQL into RAM...
+2026-07-17 15:32:44,974 | INFO | soc_platform | [LogService] Successfully loaded 3 logs from PostgreSQL. Next Log ID: 743
+2026-07-17 15:32:45,016 | ERROR | soc_platform | [ERROR] Notification schema validation failed
+2026-07-17 15:32:45,098 | INFO | apscheduler.scheduler | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-07-17 15:32:45,113 | INFO | apscheduler.scheduler | Added job "NotificationEngineService.check_and_trigger_escalations" to job store "default"
+2026-07-17 15:32:45,127 | INFO | apscheduler.scheduler | Scheduler started
+2026-07-17 15:32:45,163 | INFO | soc_platform | Escalation background scheduler started
+2026-07-17 15:33:45,100 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:34:45 IST)" (scheduled at 2026-07-17 15:33:45.097750+05:30)
+2026-07-17 15:33:45,128 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:34:45 IST)" executed successfully
+2026-07-17 15:34:45,114 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:35:45 IST)" (scheduled at 2026-07-17 15:34:45.097750+05:30)
+2026-07-17 15:34:45,117 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:35:45 IST)" executed successfully
+2026-07-17 15:35:45,106 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:36:45 IST)" (scheduled at 2026-07-17 15:35:45.097750+05:30)
+2026-07-17 15:35:45,111 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:36:45 IST)" executed successfully
+2026-07-17 15:36:45,101 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:37:45 IST)" (scheduled at 2026-07-17 15:36:45.097750+05:30)
+2026-07-17 15:36:45,105 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:37:45 IST)" executed successfully
+2026-07-17 15:37:45,099 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:38:45 IST)" (scheduled at 2026-07-17 15:37:45.097750+05:30)
+2026-07-17 15:37:45,105 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:38:45 IST)" executed successfully
+2026-07-17 15:38:45,099 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:39:45 IST)" (scheduled at 2026-07-17 15:38:45.097750+05:30)
+2026-07-17 15:38:45,104 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:39:45 IST)" executed successfully
+2026-07-17 15:39:45,113 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:40:45 IST)" (scheduled at 2026-07-17 15:39:45.097750+05:30)
+2026-07-17 15:39:45,118 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:40:45 IST)" executed successfully
+2026-07-17 15:40:45,103 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:41:45 IST)" (scheduled at 2026-07-17 15:40:45.097750+05:30)
+2026-07-17 15:40:45,107 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:41:45 IST)" executed successfully
+2026-07-17 15:41:45,101 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:42:45 IST)" (scheduled at 2026-07-17 15:41:45.097750+05:30)
+2026-07-17 15:41:45,105 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:42:45 IST)" executed successfully
+2026-07-17 15:42:45,114 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:43:45 IST)" (scheduled at 2026-07-17 15:42:45.097750+05:30)
+2026-07-17 15:42:45,119 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:43:45 IST)" executed successfully
+2026-07-17 15:43:45,108 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:44:45 IST)" (scheduled at 2026-07-17 15:43:45.097750+05:30)
+2026-07-17 15:43:45,113 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:44:45 IST)" executed successfully
+2026-07-17 15:44:45,101 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:45:45 IST)" (scheduled at 2026-07-17 15:44:45.097750+05:30)
+2026-07-17 15:44:45,106 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:45:45 IST)" executed successfully
+2026-07-17 15:45:45,112 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:46:45 IST)" (scheduled at 2026-07-17 15:45:45.097750+05:30)
+2026-07-17 15:45:45,117 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:46:45 IST)" executed successfully
+2026-07-17 15:46:45,112 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:47:45 IST)" (scheduled at 2026-07-17 15:46:45.097750+05:30)
+2026-07-17 15:46:45,115 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:47:45 IST)" executed successfully
+2026-07-17 15:47:45,104 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:48:45 IST)" (scheduled at 2026-07-17 15:47:45.097750+05:30)
+2026-07-17 15:47:45,107 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:48:45 IST)" executed successfully
+2026-07-17 15:48:45,112 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:49:45 IST)" (scheduled at 2026-07-17 15:48:45.097750+05:30)
+2026-07-17 15:48:45,116 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:49:45 IST)" executed successfully
+2026-07-17 15:49:45,113 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:50:45 IST)" (scheduled at 2026-07-17 15:49:45.097750+05:30)
+2026-07-17 15:49:45,116 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:50:45 IST)" executed successfully
+2026-07-17 15:50:45,105 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:51:45 IST)" (scheduled at 2026-07-17 15:50:45.097750+05:30)
+2026-07-17 15:50:45,117 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:51:45 IST)" executed successfully
+2026-07-17 15:51:45,108 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:52:45 IST)" (scheduled at 2026-07-17 15:51:45.097750+05:30)
+2026-07-17 15:51:45,116 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:52:45 IST)" executed successfully
+2026-07-17 15:52:45,114 | INFO | apscheduler.executors.default | Running job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:53:45 IST)" (scheduled at 2026-07-17 15:52:45.097750+05:30)
+2026-07-17 15:52:45,123 | INFO | apscheduler.executors.default | Job "NotificationEngineService.check_and_trigger_escalations (trigger: interval[0:01:00], next run at: 2026-07-17 15:53:45 IST)" executed successfully
