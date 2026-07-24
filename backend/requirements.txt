@@ -7,3 +7,5 @@ requests
 docker
 watchdog
 apscheduler
+psutil
+scapy
