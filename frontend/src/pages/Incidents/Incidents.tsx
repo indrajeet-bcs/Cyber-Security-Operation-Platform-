@@ -144,10 +144,10 @@ export default function Incidents() {
       {/* Page Title & Controls */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', mb: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, color: '#111827', mb: 0.5 }}>
             Incident Investigation Queue
           </Typography>
-          <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+          <Typography variant="body2" sx={{ color: '#6B7280' }}>
             Assign owner, sort, filter, and escalate active cybersecurity threats.
           </Typography>
         </Box>
@@ -161,7 +161,7 @@ export default function Incidents() {
             sx={{ 
               borderRadius: 2, 
               textTransform: 'none',
-              ...(autoRefreshInterval ? {} : { color: '#9CA3AF', borderColor: '#4B5563' })
+              ...(autoRefreshInterval ? { backgroundColor: '#2563EB' } : { color: '#6B7280', borderColor: '#E5E7EB', backgroundColor: '#FFFFFF' })
             }}
           >
             {autoRefreshInterval ? 'Auto-Refresh: ON (10s)' : 'Auto-Refresh: OFF'}
@@ -170,7 +170,7 @@ export default function Incidents() {
             variant="outlined"
             onClick={() => refetch()}
             disabled={isRefetching}
-            sx={{ borderRadius: 2, textTransform: 'none', color: '#F3F4F6', borderColor: '#4B5563' }}
+            sx={{ borderRadius: 2, textTransform: 'none', color: '#111827', borderColor: '#E5E7EB', backgroundColor: '#FFFFFF', '&:hover': { backgroundColor: '#F1F5F9', borderColor: '#CBD5E1' } }}
           >
             Manual Refresh
           </Button>
@@ -178,7 +178,7 @@ export default function Incidents() {
       </Box>
 
       {/* Filters Card */}
-      <Card>
+      <Card elevation={0} sx={{ border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
         <CardContent sx={{ p: 2.5 }}>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
             {/* Search Input */}
@@ -195,7 +195,7 @@ export default function Incidents() {
                 }}
                 slotProps={{
                   input: {
-                    startAdornment: <SearchIcon sx={{ color: '#9CA3AF', mr: 1 }} />,
+                    startAdornment: <SearchIcon sx={{ color: '#6B7280', mr: 1 }} />,
                     endAdornment: search && (
                       <IconButton size="small" onClick={() => setSearch('')}>
                         <ClearIcon fontSize="small" />
@@ -258,6 +258,7 @@ export default function Incidents() {
                   variant="outlined"
                   onClick={handleClearFilters}
                   startIcon={<ClearIcon />}
+                  sx={{ borderColor: '#E5E7EB', color: '#6B7280', '&:hover': { borderColor: '#9CA3AF', backgroundColor: '#F1F5F9' } }}
                 >
                   Clear
                 </Button>
@@ -268,20 +269,21 @@ export default function Incidents() {
       </Card>
 
       {/* Incidents Table */}
-      <Card sx={{ border: '1px solid #1F2937' }}>
+      <Card elevation={0} sx={{ border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
         {isError ? (
           <ErrorState message="Failed to fetch incidents." error={error} onRetry={() => refetch()} />
         ) : (
-          <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+          <TableContainer component={Paper} elevation={0} sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
             <Table>
               <TableHead>
-                <TableRow>
+                <TableRow sx={{ backgroundColor: '#F8FAFC' }}>
                   {/* ID */}
                   <TableCell>
                     <TableSortLabel
                       active={orderBy === 'incident_id'}
                       direction={orderBy === 'incident_id' ? order : 'asc'}
                       onClick={() => handleRequestSort('incident_id')}
+                      sx={{ fontWeight: 600, color: '#111827' }}
                     >
                       Incident ID
                     </TableSortLabel>
@@ -292,6 +294,7 @@ export default function Incidents() {
                       active={orderBy === 'severity'}
                       direction={orderBy === 'severity' ? order : 'asc'}
                       onClick={() => handleRequestSort('severity')}
+                      sx={{ fontWeight: 600, color: '#111827' }}
                     >
                       Severity
                     </TableSortLabel>
@@ -302,26 +305,28 @@ export default function Incidents() {
                       active={orderBy === 'status'}
                       direction={orderBy === 'status' ? order : 'asc'}
                       onClick={() => handleRequestSort('status')}
+                      sx={{ fontWeight: 600, color: '#111827' }}
                     >
                       Status
                     </TableSortLabel>
                   </TableCell>
                   {/* Detection Reason */}
-                  <TableCell>Detection Reason</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Detection Reason</TableCell>
                   {/* Source */}
-                  <TableCell>Source</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Source</TableCell>
                   {/* Created Time */}
                   <TableCell>
                     <TableSortLabel
                       active={orderBy === 'created_at'}
                       direction={orderBy === 'created_at' ? order : 'asc'}
                       onClick={() => handleRequestSort('created_at')}
+                      sx={{ fontWeight: 600, color: '#111827' }}
                     >
                       Created Time
                     </TableSortLabel>
                   </TableCell>
                   {/* Actions */}
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 600, color: '#111827' }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               
@@ -342,12 +347,11 @@ export default function Incidents() {
                   paginatedIncidents.map((incident: Incident) => (
                     <TableRow
                       key={incident.id}
-                      hover
                       onClick={() => navigate(`/incident/${incident.incident_id}`)}
-                      sx={{ cursor: 'pointer' }}
+                      sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#F1F5F9 !important' } }}
                     >
                       {/* ID */}
-                      <TableCell sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#3B82F6' }}>
+                      <TableCell sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563EB' }}>
                         {incident.incident_id}
                       </TableCell>
                       {/* Severity */}
@@ -359,15 +363,15 @@ export default function Incidents() {
                         <StatusChip status={incident.status} />
                       </TableCell>
                       {/* Detection Reason */}
-                      <TableCell sx={{ fontWeight: 500 }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#111827' }}>
                         {incident.title}
                       </TableCell>
                       {/* Source */}
-                      <TableCell sx={{ color: '#D1D5DB' }}>
+                      <TableCell sx={{ color: '#475569' }}>
                         {incident.alert?.source || 'System'}
                       </TableCell>
                       {/* Created Time */}
-                      <TableCell sx={{ color: '#9CA3AF' }}>
+                      <TableCell sx={{ color: '#6B7280' }}>
                         {new Date(incident.created_at).toLocaleString()}
                       </TableCell>
                       {/* Actions */}
@@ -379,7 +383,7 @@ export default function Incidents() {
                                 color="primary"
                                 onClick={(e) => handleTakeIncident(e, incident.incident_id)}
                                 disabled={assignMutation.isPending}
-                                sx={{ backgroundColor: '#3B82F610', '&:hover': { backgroundColor: '#3B82F625' } }}
+                                sx={{ backgroundColor: '#EFF6FF', color: '#2563EB', '&:hover': { backgroundColor: '#DBEAFE' } }}
                               >
                                 <TakeIcon fontSize="small" />
                               </IconButton>
@@ -388,7 +392,7 @@ export default function Incidents() {
                           <Tooltip title="View Details">
                             <IconButton
                               onClick={() => navigate(`/incident/${incident.incident_id}`)}
-                              sx={{ backgroundColor: '#9CA3AF10', '&:hover': { backgroundColor: '#9CA3AF20' } }}
+                              sx={{ backgroundColor: '#F1F5F9', color: '#6B7280', '&:hover': { backgroundColor: '#E2E8F0', color: '#111827' } }}
                             >
                               <ViewIcon fontSize="small" />
                             </IconButton>
@@ -415,7 +419,7 @@ export default function Incidents() {
             setRowsPerPage(parseInt(e.target.value, 10));
             setPage(0);
           }}
-          sx={{ borderTop: '1px solid #1F2937' }}
+          sx={{ borderTop: '1px solid #E5E7EB', color: '#6B7280' }}
         />
       </Card>
 

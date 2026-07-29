@@ -17,19 +17,19 @@ export default function ErrorState({
       <Alert
         severity="error"
         sx={{
-          backgroundColor: '#1F1015',
-          border: '1px solid #F87171',
-          color: '#F87171',
+          backgroundColor: '#FEF2F2',
+          border: '1px solid #FCA5A5',
+          color: '#991B1B',
           '& .MuiAlert-icon': {
-            color: '#F87171',
+            color: '#EF4444',
           },
         }}
       >
-        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+        <Typography variant="body1" sx={{ fontWeight: 600 }}>
           {message}
         </Typography>
         {error && (
-          <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.8 }}>
+          <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#7F1D1D' }}>
             Details: {error.message || String(error)}
           </Typography>
         )}
@@ -42,11 +42,12 @@ export default function ErrorState({
             startIcon={<RefreshIcon />}
             onClick={onRetry}
             sx={{
-              borderColor: '#F87171',
-              color: '#F87171',
+              borderColor: '#FCA5A5',
+              color: '#DC2626',
+              backgroundColor: '#FFFFFF',
               '&:hover': {
                 borderColor: '#EF4444',
-                backgroundColor: 'rgba(248, 113, 113, 0.08)',
+                backgroundColor: '#FEF2F2',
               },
             }}
           >

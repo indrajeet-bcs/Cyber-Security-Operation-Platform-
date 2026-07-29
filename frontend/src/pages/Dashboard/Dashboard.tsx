@@ -110,7 +110,7 @@ export default function Dashboard() {
   if (summaryError || incidentsError) {
     return (
       <Box sx={{ mt: 4 }}>
-        <Alert severity="error" sx={{ backgroundColor: '#1F1015', border: '1px solid #F87171' }}>
+        <Alert severity="error" sx={{ backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B' }}>
           Failed to load dashboard metrics. Ensure the backend FastAPI server is running.
           {summaryErrObj ? ` Error details: ${(summaryErrObj as any).message}` : ''}
         </Alert>
@@ -123,10 +123,10 @@ export default function Dashboard() {
       {/* Title Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', mb: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, color: '#111827', mb: 0.5 }}>
             Security Monitoring Dashboard
           </Typography>
-          <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+          <Typography variant="body2" sx={{ color: '#6B7280' }}>
             Real-time SIEM activity, metrics, and recent alert escalation queues.
           </Typography>
         </Box>
@@ -134,6 +134,10 @@ export default function Dashboard() {
           variant="contained" 
           onClick={() => navigate('/incidents')}
           endIcon={<ArrowForwardIcon />}
+          sx={{
+            backgroundColor: '#2563EB',
+            '&:hover': { backgroundColor: '#1D4ED8' },
+          }}
         >
           View Full Queue
         </Button>
@@ -143,7 +147,7 @@ export default function Dashboard() {
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(5, 1fr)' }, gap: 2.5 }}>
         {[
           // Row 1
-          { title: 'Total Logs',      value: summary?.total_logs,              icon: <DatabaseIcon />,  color: '#3B82F6',                          type: 'raw' },
+          { title: 'Total Logs',      value: summary?.total_logs,              icon: <DatabaseIcon />,  color: '#2563EB',                          type: 'raw' },
           { title: 'Total Incidents', value: summary?.total_incidents,          icon: <ShieldIcon />,    color: '#8B5CF6',                          type: 'raw' },
           { title: 'Open',            value: summary?.open_incidents,           icon: <OpenIcon />,      color: theme.palette.status.open,          type: 'status' },
           { title: 'Acknowledged',    value: summary?.acknowledged_incidents,   icon: <AckIcon />,       color: theme.palette.status.acknowledged,   type: 'status' },
@@ -157,13 +161,17 @@ export default function Dashboard() {
         ].map((kpi, idx) => (
           <Card
             key={idx}
+            elevation={0}
             sx={{
               position: 'relative',
               overflow: 'hidden',
-              transition: 'all 0.3s ease',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
               '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: `0 8px 24px rgba(0,0,0,0.5)`,
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
                 borderColor: kpi.color,
               },
             }}
@@ -174,13 +182,13 @@ export default function Dashboard() {
             <CardContent sx={{ p: 2.5 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                     {kpi.type === 'raw' ? kpi.title : `${kpi.title} Incidents`}
                   </Typography>
                   {summaryLoading ? (
                     <Skeleton width={80} height={40} sx={{ mt: 1 }} />
                   ) : (
-                    <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: '#F3F4F6' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: '#111827' }}>
                       {typeof kpi.value === 'number' ? kpi.value.toLocaleString() : (kpi.value ?? 0)}
                     </Typography>
                   )}
@@ -189,7 +197,7 @@ export default function Dashboard() {
                   sx={{
                     p: 1.5,
                     borderRadius: '8px',
-                    backgroundColor: `${kpi.color}18`,
+                    backgroundColor: `${kpi.color}15`,
                     color: kpi.color,
                     display: 'flex',
                     alignItems: 'center',
@@ -206,9 +214,9 @@ export default function Dashboard() {
       {/* 2. Visual Charts Container */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
         {/* Severity chart */}
-        <Card sx={{ height: 380, display: 'flex', flexDirection: 'column' }}>
+        <Card elevation={0} sx={{ height: 380, display: 'flex', flexDirection: 'column', backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
           <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#F3F4F6' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#111827' }}>
               Severity Distribution
             </Typography>
             {summaryLoading ? (
@@ -237,7 +245,7 @@ export default function Dashboard() {
                       ))}
                     </Pie>
                     <ChartTooltip
-                      contentStyle={{ backgroundColor: '#111827', border: '1px solid #1F2937', color: '#F3F4F6' }}
+                      contentStyle={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', color: '#111827', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                     />
                     <Legend verticalAlign="bottom" height={36} />
                   </PieChart>
@@ -248,9 +256,9 @@ export default function Dashboard() {
         </Card>
 
         {/* Status chart */}
-        <Card sx={{ height: 380, display: 'flex', flexDirection: 'column' }}>
+        <Card elevation={0} sx={{ height: 380, display: 'flex', flexDirection: 'column', backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}>
           <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#F3F4F6' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#111827' }}>
               Incident Status Distribution
             </Typography>
             {summaryLoading ? (
@@ -265,11 +273,11 @@ export default function Dashboard() {
               <Box sx={{ flexGrow: 1, minHeight: 250 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={statusChartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" />
-                    <XAxis dataKey="name" stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis dataKey="name" stroke="#6B7280" />
+                    <YAxis stroke="#6B7280" allowDecimals={false} />
                     <ChartTooltip
-                      contentStyle={{ backgroundColor: '#111827', border: '1px solid #1F2937', color: '#F3F4F6' }}
+                      contentStyle={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', color: '#111827', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                     />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                       {statusChartData.map((entry, index) => (
@@ -285,24 +293,24 @@ export default function Dashboard() {
       </Box>
 
       {/* 3. Recent Incidents Table */}
-      <Card sx={{ border: '1px solid #1F2937' }}>
-        <Box sx={{ p: 2.5, borderBottom: '1px solid #1F2937', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#F3F4F6' }}>
+      <Card elevation={0} sx={{ border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
+        <Box sx={{ p: 2.5, borderBottom: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#111827' }}>
             Recent Incidents
           </Typography>
-          <Chip label="Live Feed" color="success" size="small" variant="outlined" />
+          <Chip label="Live Feed" color="success" size="small" variant="outlined" sx={{ fontWeight: 600 }} />
         </Box>
-        <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}>
+        <TableContainer component={Paper} elevation={0} sx={{ backgroundColor: 'transparent', boxShadow: 'none', border: 'none' }}>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Incident ID</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Severity</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Assigned To</TableCell>
-                <TableCell>Created Time</TableCell>
-                <TableCell align="right">Actions</TableCell>
+              <TableRow sx={{ backgroundColor: '#F8FAFC' }}>
+                <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Incident ID</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Title</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Severity</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Assigned To</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: '#111827' }}>Created Time</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 600, color: '#111827' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -316,7 +324,7 @@ export default function Dashboard() {
                 ))
               ) : recentIncidents.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 6, color: '#9CA3AF' }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 6, color: '#6B7280' }}>
                     No recent incidents found. Ensure logs and alerts are being processed.
                   </TableCell>
                 </TableRow>
@@ -325,14 +333,14 @@ export default function Dashboard() {
                   <TableRow 
                     key={incident.id}
                     onClick={() => navigate(`/incident/${incident.incident_id}`)}
-                    sx={{ cursor: 'pointer' }}
+                    sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#F1F5F9 !important' } }}
                   >
                     {/* ID */}
-                    <TableCell sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#60A5FA' }}>
+                    <TableCell sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563EB' }}>
                       {incident.incident_id}
                     </TableCell>
                     {/* Title */}
-                    <TableCell sx={{ fontWeight: 500, color: '#E5E7EB' }}>
+                    <TableCell sx={{ fontWeight: 600, color: '#111827' }}>
                       {incident.title}
                     </TableCell>
                     {/* Severity */}
@@ -341,7 +349,7 @@ export default function Dashboard() {
                         label={incident.severity}
                         size="small"
                         sx={{
-                          backgroundColor: `${getSeverityColor(incident.severity)}18`,
+                          backgroundColor: `${getSeverityColor(incident.severity)}15`,
                           color: getSeverityColor(incident.severity),
                           border: `1px solid ${getSeverityColor(incident.severity)}40`,
                           fontWeight: 700,
@@ -355,7 +363,7 @@ export default function Dashboard() {
                         label={incident.status}
                         size="small"
                         sx={{
-                          backgroundColor: `${getStatusColor(incident.status)}18`,
+                          backgroundColor: `${getStatusColor(incident.status)}15`,
                           color: getStatusColor(incident.status),
                           border: `1px solid ${getStatusColor(incident.status)}40`,
                           fontWeight: 600,
@@ -364,11 +372,11 @@ export default function Dashboard() {
                       />
                     </TableCell>
                     {/* Assigned Analyst */}
-                    <TableCell sx={{ color: '#E5E7EB' }}>
+                    <TableCell sx={{ color: '#111827' }}>
                       {incident.assigned_to ? (
                         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                          <Typography variant="body2">{incident.assigned_to}</Typography>
-                          <Typography variant="caption" sx={{ color: '#9CA3AF', backgroundColor: '#1E293B', px: 0.5, borderRadius: '4px' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>{incident.assigned_to}</Typography>
+                          <Typography variant="caption" sx={{ color: '#475569', backgroundColor: '#E2E8F0', px: 0.8, py: 0.2, borderRadius: '4px', fontWeight: 600 }}>
                             {incident.assigned_role}
                           </Typography>
                         </Box>
@@ -379,7 +387,7 @@ export default function Dashboard() {
                       )}
                     </TableCell>
                     {/* Created Time */}
-                    <TableCell sx={{ color: '#9CA3AF' }}>
+                    <TableCell sx={{ color: '#6B7280' }}>
                       {new Date(incident.created_at).toLocaleString()}
                     </TableCell>
                     {/* Action button */}
@@ -388,6 +396,7 @@ export default function Dashboard() {
                         variant="outlined"
                         size="small"
                         onClick={() => navigate(`/incident/${incident.incident_id}`)}
+                        sx={{ borderColor: '#E5E7EB', color: '#2563EB', '&:hover': { borderColor: '#2563EB', backgroundColor: '#EFF6FF' } }}
                       >
                         Investigate
                       </Button>

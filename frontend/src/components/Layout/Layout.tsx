@@ -1,4 +1,3 @@
-
 import { Outlet } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
 import Sidebar from './Sidebar';
@@ -14,7 +13,7 @@ export default function Layout() {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0B0F19' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F5F7FA' }}>
       <CssBaseline />
       
       {/* Persistent Left Sidebar */}

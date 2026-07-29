@@ -439,3 +439,115 @@ def close_alert(alert_id: int | str) -> None:
     except Exception as exc:
         logger.error(f"[DB] Failed to close alert {alert_id}: {exc}")
         raise
+
+
+# ---------------------------------------------------------------------------
+# List / Query Methods (for Alerts API)
+# ---------------------------------------------------------------------------
+
+_ALERT_SELECT_COLUMNS = """
+    id, alert_id, alert_title, alert_type, severity, priority,
+    confidence, risk_score, status, occurrence_count, source, source_ip,
+    host, username, event_fingerprint, alert_fingerprint, rule_matches,
+    correlation_matches, first_seen, last_seen, created_at, updated_at,
+    acknowledged_at, resolved_at, closed_at
+"""
+
+
+def list_alerts(
+    severity: str | None = None,
+    status: str | None = None,
+    source_ip: str | None = None,
+    source: str | None = None,
+    search: str | None = None,
+    sort_by: str = "created_at",
+    sort_order: str = "desc",
+    skip: int = 0,
+    limit: int = 50,
+) -> dict:
+    """
+    Returns paginated, filtered, and sorted alerts from the database.
+    Returns { "total": int, "alerts": list[dict] }.
+    """
+    where_clauses = []
+    params = []
+
+    if severity:
+        where_clauses.append("severity = %s")
+        params.append(severity)
+    if status:
+        where_clauses.append("status = %s")
+        params.append(status)
+    if source_ip:
+        where_clauses.append("source_ip ILIKE %s")
+        params.append(f"%{source_ip}%")
+    if source:
+        where_clauses.append("source ILIKE %s")
+        params.append(f"%{source}%")
+    if search:
+        search_clause = """
+            (alert_id ILIKE %s OR alert_title ILIKE %s OR source_ip ILIKE %s
+             OR source ILIKE %s OR host ILIKE %s OR username ILIKE %s
+             OR rule_matches ILIKE %s)
+        """
+        where_clauses.append(search_clause)
+        pattern = f"%{search}%"
+        params.extend([pattern] * 7)
+
+    where_sql = ""
+    if where_clauses:
+        where_sql = "WHERE " + " AND ".join(where_clauses)
+
+    # Validate sort column to prevent SQL injection
+    allowed_sort_columns = {
+        "created_at", "severity", "status", "alert_title",
+        "risk_score", "occurrence_count", "last_seen", "first_seen",
+    }
+    if sort_by not in allowed_sort_columns:
+        sort_by = "created_at"
+    if sort_order.lower() not in ("asc", "desc"):
+        sort_order = "desc"
+
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+
+            # Count total matching rows
+            count_sql = f"SELECT COUNT(*) FROM alerts {where_sql}"
+            cursor.execute(count_sql, params)
+            total = cursor.fetchone()[0]
+
+            # Fetch paginated results
+            query_sql = f"""
+                SELECT {_ALERT_SELECT_COLUMNS}
+                FROM alerts
+                {where_sql}
+                ORDER BY {sort_by} {sort_order}
+                OFFSET %s LIMIT %s
+            """
+            cursor.execute(query_sql, params + [skip, limit])
+            rows = cursor.fetchall()
+
+            alerts = [_row_to_dict(row) for row in rows]
+            return {"total": total, "alerts": alerts}
+    except Exception as exc:
+        logger.error(f"[DB] Failed to list alerts: {exc}")
+        raise
+
+
+def get_alert_by_db_id(record_id: int) -> dict | None:
+    """
+    Fetches a single alert by its database primary key (id).
+    """
+    sql = f"SELECT {_ALERT_SELECT_COLUMNS} FROM alerts WHERE id = %s LIMIT 1"
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(sql, (record_id,))
+            row = cursor.fetchone()
+            if row:
+                return _row_to_dict(row)
+            return None
+    except Exception as exc:
+        logger.error(f"[DB] Failed to get alert by db id={record_id}: {exc}")
+        raise

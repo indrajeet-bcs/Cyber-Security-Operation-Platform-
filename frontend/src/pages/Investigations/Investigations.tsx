@@ -9,10 +9,10 @@ export default function Investigations() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
       <Box>
-        <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', mb: 0.5 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, color: '#0F172A', mb: 0.5 }}>
           Threat Hunting & Investigations
         </Typography>
-        <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+        <Typography variant="body2" sx={{ color: '#64748B' }}>
           Interactive correlation log search and forensics timeline workspace.
         </Typography>
       </Box>
@@ -30,7 +30,7 @@ export default function Investigations() {
               onChange={(e) => setQuery(e.target.value)}
               slotProps={{
                 input: {
-                  startAdornment: <SearchIcon sx={{ color: '#6B7280', mr: 1 }} />,
+                  startAdornment: <SearchIcon sx={{ color: '#94A3B8', mr: 1 }} />,
                   style: { fontFamily: 'monospace' }
                 }
               }}
@@ -45,8 +45,8 @@ export default function Investigations() {
       </Card>
 
       {/* Workspace Tabs */}
-      <Paper sx={{ border: '1px solid #1F2937', bgcolor: '#111827' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Paper sx={{ border: '1px solid #E2E8F0', bgcolor: '#FFFFFF' }}>
+        <Box sx={{ borderBottom: 1, borderColor: '#E2E8F0' }}>
           <Tabs value={tabValue} onChange={(_, val) => setTabValue(val)} textColor="primary" indicatorColor="primary">
             <Tab label="Forensics Graph" icon={<HubIcon />} iconPosition="start" />
             <Tab label="Timeline Analysis" icon={<TimelineIcon />} iconPosition="start" />
@@ -55,21 +55,21 @@ export default function Investigations() {
         <Box sx={{ p: 4, minHeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           {tabValue === 0 ? (
             <Box>
-              <HubIcon sx={{ fontSize: 60, color: '#3B82F6', mb: 2, opacity: 0.8 }} />
-              <Typography variant="h6" sx={{ color: '#F3F4F6', fontWeight: 600, mb: 1 }}>
+              <HubIcon sx={{ fontSize: 60, color: '#2563EB', mb: 2, opacity: 0.8 }} />
+              <Typography variant="h6" sx={{ color: '#0F172A', fontWeight: 700, mb: 1 }}>
                 Graph Visualizer Simulation
               </Typography>
-              <Typography variant="body2" sx={{ color: '#9CA3AF', maxWidth: 500 }}>
+              <Typography variant="body2" sx={{ color: '#64748B', maxWidth: 500 }}>
                 Interactive visual node graph showing relationship flows between sources, targets, IPs, and rules will render here.
               </Typography>
             </Box>
           ) : (
             <Box>
-              <TimelineIcon sx={{ fontSize: 60, color: '#10B981', mb: 2, opacity: 0.8 }} />
-              <Typography variant="h6" sx={{ color: '#F3F4F6', fontWeight: 600, mb: 1 }}>
+              <TimelineIcon sx={{ fontSize: 60, color: '#16A34A', mb: 2, opacity: 0.8 }} />
+              <Typography variant="h6" sx={{ color: '#0F172A', fontWeight: 700, mb: 1 }}>
                 Correlation Event Timeline
               </Typography>
-              <Typography variant="body2" sx={{ color: '#9CA3AF', maxWidth: 500 }}>
+              <Typography variant="body2" sx={{ color: '#64748B', maxWidth: 500 }}>
                 A chronologically ordered timeline list of parsed network logs and authentication trails will render here.
               </Typography>
             </Box>

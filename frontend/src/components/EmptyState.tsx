@@ -12,6 +12,7 @@ export default function EmptyState({
 }: EmptyStateProps) {
   return (
     <Paper
+      elevation={0}
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -19,17 +20,17 @@ export default function EmptyState({
         justifyContent: 'center',
         p: 6,
         textAlign: 'center',
-        backgroundColor: '#111827',
-        border: '1px solid #1F2937',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5E7EB',
         borderRadius: '8px',
         mt: 2,
       }}
     >
-      <InfoIcon sx={{ fontSize: 48, color: '#3B82F6', mb: 2, opacity: 0.8 }} />
-      <Typography variant="h6" sx={{ fontWeight: 600, color: '#F3F4F6', mb: 1 }}>
+      <InfoIcon sx={{ fontSize: 48, color: '#2563EB', mb: 2, opacity: 0.8 }} />
+      <Typography variant="h6" sx={{ fontWeight: 600, color: '#111827', mb: 1 }}>
         {message}
       </Typography>
-      <Typography variant="body2" sx={{ color: '#9CA3AF', maxWidth: 400 }}>
+      <Typography variant="body2" sx={{ color: '#6B7280', maxWidth: 400 }}>
         {subMessage}
       </Typography>
     </Paper>
