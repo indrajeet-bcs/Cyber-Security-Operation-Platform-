@@ -45,11 +45,11 @@
         <div class="status-list">
             <div class="status-item">
                 <span class="status-label">Application Name</span>
-                <span class="status-indicator">LoginApp</span>
+                <span class="status-indicator">{{ app_name|default('LoginApp') }}</span>
             </div>
             <div class="status-item">
                 <span class="status-label">Port Association</span>
-                <span class="status-indicator">8080</span>
+                <span class="status-indicator">{{ port|default(8080) }}</span>
             </div>
             <div class="status-item">
                 <span class="status-label">Upstream Proxy</span>

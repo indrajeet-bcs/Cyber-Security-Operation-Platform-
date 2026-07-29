@@ -10,8 +10,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>SOC Portal</h1>
-            <p>Identity Verification & Threat Assessment</p>
+            <h1>SOC Portal - {{ app_name|default('LoginApp') }}</h1>
+            <p>Identity Verification & Threat Assessment (Port {{ port|default(8080) }})</p>
         </div>
 
         {% if error %}

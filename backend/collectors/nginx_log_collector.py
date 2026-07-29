@@ -96,6 +96,16 @@ MONITORED_APPLICATIONS = [
         "name": "LoginApp",
         "upstream_port": "8080",
         "server_name": "localhost"
+    },
+    {
+        "name": "LoginApp2",
+        "upstream_port": "8081",
+        "server_name": "localhost"
+    },
+    {
+        "name": "LoginApp3",
+        "upstream_port": "8082",
+        "server_name": "localhost"
     }
 ]
 
