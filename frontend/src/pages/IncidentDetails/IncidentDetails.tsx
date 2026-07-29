@@ -58,51 +58,31 @@ export default function IncidentDetails() {
     severity: 'success',
   });
 
-  // Queries & Mutations
-  const { data: incident, isLoading, isError, error, refetch } = useIncident(incidentId || '');
+  // Data fetching
+  const { data: incident, isLoading, isError, refetch } = useIncident(incidentId || '');
+
+  // Mutations
   const assignMutation = useAssignIncident();
   const noteMutation = useAddNote();
   const closeMutation = useCloseIncident();
 
-  if (isLoading) {
-    return <LoadingState message="Loading incident details..." />;
-  }
+  if (isLoading) return <LoadingState message="Loading incident records..." />;
+  if (isError || !incident) return <ErrorState message="Failed to load incident details" onRetry={refetch} />;
 
-  if (isError || !incident) {
-    return (
-      <Box sx={{ mt: 4 }}>
-        <ErrorState message="Failed to load incident details." error={error} onRetry={() => refetch()} />
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/incidents')} sx={{ mt: 2 }}>
-          Back to Incidents Queue
-        </Button>
-      </Box>
-    );
-  }
+  // Parse notes list
+  const notesList = incident.notes ? incident.notes.split('\n---\n').filter(Boolean) : [];
 
-  // Split newline appended notes for history listing
-  const notesList = incident.notes ? incident.notes.split('\n').filter(n => n.trim() !== '') : [];
-
-  // ----------------------------------------------------
-  // Handler Submissions
-  // ----------------------------------------------------
+  // Handlers
   const handleTakeIncident = async () => {
     try {
       await assignMutation.mutateAsync({
         incidentId: incident.incident_id,
         assigned_to: 'shubham',
-        assigned_role: 'SOC_L1',
+        assigned_role: 'SOC Analyst L1',
       });
-      setToast({
-        open: true,
-        message: 'Incident successfully assigned to you! State moved to Investigating.',
-        severity: 'success',
-      });
-    } catch (err: any) {
-      setToast({
-        open: true,
-        message: `Failed to assign incident: ${err?.response?.data?.detail || err.message}`,
-        severity: 'error',
-      });
+      setToast({ open: true, message: 'Incident assigned to shubham', severity: 'success' });
+    } catch {
+      setToast({ open: true, message: 'Failed to assign incident', severity: 'error' });
     }
   };
 
@@ -116,35 +96,19 @@ export default function IncidentDetails() {
         note: newNote.trim(),
       });
       setNewNote('');
-      setToast({
-        open: true,
-        message: 'Note successfully added.',
-        severity: 'success',
-      });
-    } catch (err: any) {
-      setToast({
-        open: true,
-        message: `Failed to add note: ${err?.response?.data?.detail || err.message}`,
-        severity: 'error',
-      });
+      setToast({ open: true, message: 'Note added successfully', severity: 'success' });
+    } catch {
+      setToast({ open: true, message: 'Failed to add note', severity: 'error' });
     }
   };
 
   const handleCloseIncident = async () => {
-    setConfirmCloseOpen(false);
     try {
       await closeMutation.mutateAsync(incident.incident_id);
-      setToast({
-        open: true,
-        message: 'Incident closed successfully.',
-        severity: 'success',
-      });
-    } catch (err: any) {
-      setToast({
-        open: true,
-        message: `Failed to close incident: ${err?.response?.data?.detail || err.message}`,
-        severity: 'error',
-      });
+      setConfirmCloseOpen(false);
+      setToast({ open: true, message: 'Incident closed successfully', severity: 'success' });
+    } catch {
+      setToast({ open: true, message: 'Failed to close incident', severity: 'error' });
     }
   };
 
@@ -155,7 +119,7 @@ export default function IncidentDetails() {
         <Button 
           startIcon={<ArrowBackIcon />} 
           onClick={() => navigate('/incidents')}
-          sx={{ color: '#9CA3AF', '&:hover': { color: '#F3F4F6' } }}
+          sx={{ color: '#64748B', '&:hover': { color: '#2563EB' } }}
         >
           Back to Incident Queue
         </Button>
@@ -165,13 +129,13 @@ export default function IncidentDetails() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-            <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', fontFamily: 'monospace' }}>
+            <Typography variant="h4" sx={{ fontWeight: 800, color: '#2563EB', fontFamily: 'monospace' }}>
               {incident.incident_id}
             </Typography>
             <StatusChip status={incident.status} />
             <SeverityBadge severity={incident.severity} />
           </Box>
-          <Typography variant="h5" sx={{ fontWeight: 600, color: '#E5E7EB', mb: 0.5 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: '#0F172A', mb: 0.5 }}>
             {incident.title}
           </Typography>
         </Box>
@@ -185,16 +149,16 @@ export default function IncidentDetails() {
             expanded={jsonExpanded} 
             onChange={(_, isExpanded) => setJsonExpanded(isExpanded)}
             sx={{ 
-              backgroundColor: '#111827', 
-              border: '1px solid #1F2937', 
-              borderRadius: '8px !important',
+              backgroundColor: '#FFFFFF', 
+              border: '1px solid #E2E8F0', 
+              borderRadius: '10px !important',
               '&:before': { display: 'none' } 
             }}
           >
-            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#9CA3AF' }} />}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#64748B' }} />}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <CodeIcon sx={{ color: '#3B82F6' }} />
-                <Typography sx={{ fontWeight: 700, color: '#F3F4F6' }}>
+                <CodeIcon sx={{ color: '#2563EB' }} />
+                <Typography sx={{ fontWeight: 700, color: '#0F172A' }}>
                   Detection Result & Original Log Inspector
                 </Typography>
               </Box>
@@ -206,12 +170,13 @@ export default function IncidentDetails() {
                 sx={{ 
                   p: 2, 
                   m: 0, 
-                  backgroundColor: '#070A13', 
-                  border: '1px solid #1F2937', 
+                  backgroundColor: '#F8FAFC', 
+                  border: '1px solid #E2E8F0', 
                   borderRadius: '6px', 
-                  color: '#10B981', 
+                  color: '#0F172A', 
                   fontSize: '0.8rem',
                   fontFamily: 'monospace',
+                  fontWeight: 600,
                   overflowX: 'auto',
                 }}
               >
@@ -224,8 +189,8 @@ export default function IncidentDetails() {
           <Card>
             <CardContent sx={{ p: 2.5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-                <CommentIcon sx={{ color: '#3B82F6' }} />
-                <Typography variant="h6" sx={{ fontWeight: 700, color: '#F3F4F6' }}>
+                <CommentIcon sx={{ color: '#2563EB' }} />
+                <Typography variant="h6" sx={{ fontWeight: 700, color: '#0F172A' }}>
                   Analyst Log & Notes (Timeline & Resolution)
                 </Typography>
               </Box>
@@ -257,17 +222,17 @@ export default function IncidentDetails() {
                   </Box>
                 </Box>
               ) : (
-                <Alert severity="info" sx={{ mb: 4, backgroundColor: '#0C1824', color: '#60A5FA', border: '1px solid #1E3A8A' }}>
+                <Alert severity="info" sx={{ mb: 4, backgroundColor: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' }}>
                   This incident is closed. Adding additional analyst notes is locked.
                 </Alert>
               )}
 
               {/* Notes List */}
-              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5, color: '#F3F4F6' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5, color: '#0F172A' }}>
                 Timeline History ({notesList.length})
               </Typography>
               {notesList.length === 0 ? (
-                <Typography variant="body2" sx={{ color: '#6B7280', fontStyle: 'italic', py: 2 }}>
+                <Typography variant="body2" sx={{ color: '#64748B', fontStyle: 'italic', py: 2 }}>
                   No investigation notes recorded for this incident.
                 </Typography>
               ) : (
@@ -277,9 +242,9 @@ export default function IncidentDetails() {
                       key={index} 
                       sx={{ 
                         p: 2, 
-                        backgroundColor: '#1E293B30', 
-                        borderColor: '#374151',
-                        borderRadius: '6px',
+                        backgroundColor: '#F8FAFC', 
+                        borderColor: '#E2E8F0',
+                        borderRadius: '8px',
                         borderWidth: '1px',
                         borderStyle: 'solid'
                       }}
@@ -287,12 +252,12 @@ export default function IncidentDetails() {
                       <ListItem sx={{ p: 0, alignItems: 'flex-start' }}>
                         <ListItemText
                           primary={
-                            <Typography variant="body1" sx={{ color: '#E5E7EB', whiteSpace: 'pre-wrap' }}>
+                            <Typography variant="body1" sx={{ color: '#0F172A', whiteSpace: 'pre-wrap', fontWeight: 500 }}>
                               {note}
                             </Typography>
                           }
                           secondary={
-                            <Typography variant="caption" sx={{ color: '#6B7280', display: 'block', mt: 1 }}>
+                            <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mt: 1, fontWeight: 500 }}>
                               Logged by {incident.assigned_to || 'Analyst'} on {new Date(incident.updated_at).toLocaleString()}
                             </Typography>
                           }
@@ -311,7 +276,7 @@ export default function IncidentDetails() {
           {/* Action Operations card */}
           <Card>
             <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#F3F4F6' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#0F172A' }}>
                 Incident Controls
               </Typography>
               
@@ -350,12 +315,12 @@ export default function IncidentDetails() {
                     variant="contained"
                     color="error"
                     startIcon={<CloseIcon />}
-                    onClick={() => setConfirmCloseOpen(true)}
+                    onClick={() => setConfirmCloseOpen(false)}
                     disabled={closeMutation.isPending}
                     sx={{ 
                       py: 1.2,
-                      background: 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)',
-                      boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                      backgroundColor: '#DC2626',
+                      '&:hover': { backgroundColor: '#B91C1C' },
                     }}
                   >
                     Close Incident
@@ -363,8 +328,8 @@ export default function IncidentDetails() {
                 )}
 
                 {incident.status === 'closed' && (
-                  <Box sx={{ p: 2, borderRadius: '6px', backgroundColor: '#10B98110', border: '1px solid #10B98130', textAlign: 'center' }}>
-                    <Typography variant="subtitle1" sx={{ color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                  <Box sx={{ p: 2, borderRadius: '6px', backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', textAlign: 'center' }}>
+                    <Typography variant="subtitle1" sx={{ color: '#16A34A', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                       <CloseIcon /> Incident Closed
                     </Typography>
                   </Box>
@@ -376,7 +341,7 @@ export default function IncidentDetails() {
           {/* Details & Timestamps card */}
           <Card>
             <CardContent sx={{ p: 2.5 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#F3F4F6' }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#0F172A' }}>
                 Metadata
               </Typography>
               
@@ -385,19 +350,19 @@ export default function IncidentDetails() {
               {/* Analyst ownership */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.8 }}>
                 <Box>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontWeight: 600 }}>
                     Assigned Analyst
                   </Typography>
                   {incident.assigned_to ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                      <PersonIcon sx={{ color: '#3B82F6', fontSize: 18 }} />
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                      <PersonIcon sx={{ color: '#2563EB', fontSize: 18 }} />
+                      <Typography variant="body2" sx={{ fontWeight: 700, color: '#0F172A' }}>
                         {incident.assigned_to}
                       </Typography>
-                      <Chip label={incident.assigned_role} size="small" sx={{ fontSize: '0.65rem', height: 18 }} />
+                      <Chip label={incident.assigned_role} size="small" sx={{ fontSize: '0.65rem', height: 18, backgroundColor: '#EFF6FF', color: '#2563EB', fontWeight: 700 }} />
                     </Box>
                   ) : (
-                    <Typography variant="body2" sx={{ color: '#6B7280', fontStyle: 'italic', mt: 0.5 }}>
+                    <Typography variant="body2" sx={{ color: '#64748B', fontStyle: 'italic', mt: 0.5 }}>
                       Unassigned (Awaiting SOC Triage)
                     </Typography>
                   )}
@@ -408,22 +373,22 @@ export default function IncidentDetails() {
                 {/* Timestamps */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   <Box>
-                    <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', fontWeight: 600 }}>
+                    <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontWeight: 600 }}>
                       Created Time
                     </Typography>
-                    <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#E5E7EB' }}>
-                      <AccessTimeIcon sx={{ fontSize: 16, color: '#9CA3AF' }} />
+                    <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#0F172A', fontWeight: 600 }}>
+                      <AccessTimeIcon sx={{ fontSize: 16, color: '#64748B' }} />
                       {new Date(incident.created_at).toLocaleString()}
                     </Typography>
                   </Box>
 
                   {incident.acknowledged_at && (
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', fontWeight: 600 }}>
+                      <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontWeight: 600 }}>
                         Acknowledged Time
                       </Typography>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#E5E7EB' }}>
-                        <AccessTimeIcon sx={{ fontSize: 16, color: '#9CA3AF' }} />
+                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#0F172A', fontWeight: 600 }}>
+                        <AccessTimeIcon sx={{ fontSize: 16, color: '#64748B' }} />
                         {new Date(incident.acknowledged_at).toLocaleString()}
                       </Typography>
                     </Box>
@@ -431,11 +396,11 @@ export default function IncidentDetails() {
 
                   {incident.investigating_at && (
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', fontWeight: 600 }}>
+                      <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontWeight: 600 }}>
                         Investigation Started Time
                       </Typography>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#E5E7EB' }}>
-                        <AccessTimeIcon sx={{ fontSize: 16, color: '#9CA3AF' }} />
+                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#0F172A', fontWeight: 600 }}>
+                        <AccessTimeIcon sx={{ fontSize: 16, color: '#64748B' }} />
                         {new Date(incident.investigating_at).toLocaleString()}
                       </Typography>
                     </Box>
@@ -443,11 +408,11 @@ export default function IncidentDetails() {
 
                   {incident.closed_at && (
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#9CA3AF', display: 'block', fontWeight: 600 }}>
+                      <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontWeight: 600 }}>
                         Closed Time
                       </Typography>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#E5E7EB' }}>
-                        <AccessTimeIcon sx={{ fontSize: 16, color: '#9CA3AF' }} />
+                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.5, color: '#0F172A', fontWeight: 600 }}>
+                        <AccessTimeIcon sx={{ fontSize: 16, color: '#64748B' }} />
                         {new Date(incident.closed_at).toLocaleString()}
                       </Typography>
                     </Box>
@@ -464,11 +429,11 @@ export default function IncidentDetails() {
         open={confirmCloseOpen}
         onClose={() => setConfirmCloseOpen(false)}
       >
-        <DialogTitle sx={{ fontWeight: 700 }}>
+        <DialogTitle sx={{ fontWeight: 700, color: '#0F172A' }}>
           Confirm Incident Closure
         </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ color: '#9CA3AF' }}>
+          <DialogContentText sx={{ color: '#64748B' }}>
             Are you sure you want to close this incident? This action will set the status to CLOSED, record the closed_at timestamp, and lock additional note submissions.
           </DialogContentText>
         </DialogContent>
@@ -480,9 +445,7 @@ export default function IncidentDetails() {
             onClick={handleCloseIncident} 
             color="error" 
             variant="contained"
-            sx={{
-              background: 'linear-gradient(135deg, #EF4444 0%, #B91C1C 100%)',
-            }}
+            sx={{ backgroundColor: '#DC2626', '&:hover': { backgroundColor: '#B91C1C' } }}
           >
             Confirm Close
           </Button>

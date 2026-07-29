@@ -378,6 +378,8 @@ class PortTrafficCollector:
             self._window_ip_counts = defaultdict(lambda: defaultdict(int))
             self._window_state_counts = defaultdict(lambda: defaultdict(int))
 
+        window_start = now - __import__("datetime").timedelta(seconds=self.time_window_seconds)
+
         for port in self.monitored_ports:
             conn_set = window_conns.get(port, set())
             ip_counts = dict(window_ips.get(port, {}))
@@ -395,6 +397,15 @@ class PortTrafficCollector:
                 f"unique_ips={unique_ips}, "
                 f"threshold={self.traffic_threshold}"
             )
+
+            # ── 1. Record normal port traffic activity history independently ────
+            if ip_counts:
+                self._record_normal_traffic_history(
+                    port=port,
+                    ip_counts=ip_counts,
+                    window_start=window_start,
+                    window_end=now,
+                )
 
             if connection_count <= self.traffic_threshold:
                 continue
@@ -438,6 +449,44 @@ class PortTrafficCollector:
 
         # Flush any previously buffered payloads
         self._flush_retry_buffer()
+
+    def _record_normal_traffic_history(
+        self,
+        port: int,
+        ip_counts: dict[str, int],
+        window_start: datetime,
+        window_end: datetime,
+    ) -> None:
+        """Transmits factual normal port traffic activity snapshot to /api/port-traffic/record."""
+        if not ip_counts:
+            return
+
+        records = []
+        duration = max(0.0, (window_end - window_start).total_seconds())
+        for src_ip, count in ip_counts.items():
+            records.append({
+                "source_ip": src_ip,
+                "destination_ip": "127.0.0.1",
+                "protocol": "TCP",
+                "first_seen_at": window_start.isoformat(),
+                "last_seen_at": window_end.isoformat(),
+                "activity_count": count,
+                "observed_duration_seconds": duration,
+            })
+
+        payload = {
+            "monitored_port": port,
+            "window_start": window_start.isoformat(),
+            "window_end": window_end.isoformat(),
+            "records": records,
+        }
+
+        record_url = self.backend_url.replace("/api/logs", "/api/port-traffic/record")
+        try:
+            requests.post(record_url, json=payload, timeout=REQUEST_TIMEOUT)
+        except Exception as exc:
+            logger.debug(f"Normal traffic record POST failed (silent fallback): {exc}")
+
 
     def _build_payload(
         self,

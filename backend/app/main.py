@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from app.api.routes import auth, logs, incident_routes
+from app.api.routes import auth, logs, incident_routes, port_traffic_routes, system_routes, alert_routes
 from app.core.config import settings
 from app.utils.logger import logger
 
@@ -20,6 +20,11 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api")
 app.include_router(logs.router, prefix="/api")
 app.include_router(incident_routes.router, prefix="/api")
+app.include_router(port_traffic_routes.router, prefix="/api")
+app.include_router(system_routes.router, prefix="/api")
+app.include_router(alert_routes.router, prefix="/api")
+
+
 
 
 scheduler = BackgroundScheduler()

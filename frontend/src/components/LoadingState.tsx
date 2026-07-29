@@ -10,34 +10,34 @@ export default function LoadingState({ rows = 5, cols = 6, message }: LoadingSta
   return (
     <Box>
       {message && (
-        <Typography variant="body2" sx={{ mb: 1, color: '#9CA3AF' }}>
+        <Typography variant="body2" sx={{ mb: 1, color: '#6B7280' }}>
           {message}
         </Typography>
       )}
-      <TableContainer component={Paper} sx={{ border: '1px solid #1F2937', mt: 2 }}>
+      <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #E5E7EB', borderRadius: '8px', mt: 2, backgroundColor: '#FFFFFF' }}>
         <Table>
-        <TableHead>
-          <TableRow>
-            {Array.from({ length: cols }).map((_, idx) => (
-              <TableCell key={idx}>
-                <Skeleton variant="text" width={85} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.08)' }} />
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {Array.from({ length: rows }).map((_, rowIdx) => (
-            <TableRow key={rowIdx}>
-              {Array.from({ length: cols }).map((_, colIdx) => (
-                <TableCell key={colIdx}>
-                  <Skeleton variant="rectangular" height={22} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px' }} />
+          <TableHead>
+            <TableRow sx={{ backgroundColor: '#F8FAFC' }}>
+              {Array.from({ length: cols }).map((_, idx) => (
+                <TableCell key={idx}>
+                  <Skeleton variant="text" width={85} height={24} sx={{ bgcolor: '#E2E8F0' }} />
                 </TableCell>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {Array.from({ length: rows }).map((_, rowIdx) => (
+              <TableRow key={rowIdx}>
+                {Array.from({ length: cols }).map((_, colIdx) => (
+                  <TableCell key={colIdx}>
+                    <Skeleton variant="rectangular" height={22} sx={{ bgcolor: '#F1F5F9', borderRadius: '4px' }} />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }

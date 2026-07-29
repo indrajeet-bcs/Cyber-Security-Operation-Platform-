@@ -2,7 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { dashboardService } from '../services/dashboardService';
 import { logService } from '../services/logService';
 import { incidentService } from '../services/incidentService';
-import type { Incident, DashboardSummary, IncidentStatus, Severity, LogResponse } from '../types';
+import { alertService, type GetAlertsParams } from '../services/alertService';
+import type { Incident, DashboardSummary, IncidentStatus, Severity, LogResponse, AlertsResponse } from '../types';
 
 // Fetch Dashboard Summary
 export function useDashboardSummary(refreshInterval: number | false = 30000) {
@@ -23,16 +24,15 @@ export function useLogs(skip = 0, limit = 100, refreshInterval: number | false =
 }
 
 // Fetch Incidents
+// Note: pagination is done client-side, so we always fetch all (limit=500, skip=0).
 export function useIncidents(
   status?: IncidentStatus | '',
   severity?: Severity | '',
-  skip = 0,
-  limit = 100,
   refreshInterval: number | false = false
 ) {
   return useQuery<Incident[]>({
-    queryKey: ['incidents', status, severity, skip, limit],
-    queryFn: () => incidentService.getIncidents(status, severity, skip, limit),
+    queryKey: ['incidents', status, severity],
+    queryFn: () => incidentService.getIncidents(status, severity, 0, 500),
     refetchInterval: refreshInterval,
   });
 }
@@ -96,3 +96,13 @@ export function useCloseIncident() {
     },
   });
 }
+
+// Fetch Alerts (Real Database Alerts)
+export function useAlerts(params: GetAlertsParams = {}, refreshInterval: number | false = 10000) {
+  return useQuery<AlertsResponse>({
+    queryKey: ['alerts', params],
+    queryFn: () => alertService.getAlerts(params),
+    refetchInterval: refreshInterval,
+  });
+}
+

@@ -226,3 +226,29 @@ CREATE TABLE IF NOT EXISTS users (
     is_active       BOOLEAN DEFAULT TRUE,
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ----------------------------------------------------------------
+-- 12. port_traffic_records
+-- ----------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS port_traffic_records (
+    id                          SERIAL PRIMARY KEY,
+    monitored_port              INTEGER NOT NULL,
+    source_ip                   TEXT NOT NULL,
+    destination_ip              TEXT,
+    protocol                    TEXT DEFAULT 'TCP',
+    first_seen_at               TIMESTAMPTZ NOT NULL,
+    last_seen_at                TIMESTAMPTZ NOT NULL,
+    activity_count              INTEGER NOT NULL DEFAULT 1,
+    observed_duration_seconds   DOUBLE PRECISION DEFAULT 0.0,
+    monitoring_window_start     TIMESTAMPTZ NOT NULL,
+    monitoring_window_end       TIMESTAMPTZ NOT NULL,
+    classification              TEXT DEFAULT 'OBSERVED',
+    created_at                  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_port_traffic_port_window 
+    ON port_traffic_records(monitored_port, monitoring_window_start, monitoring_window_end);
+
+CREATE INDEX IF NOT EXISTS idx_port_traffic_source_ip 
+    ON port_traffic_records(source_ip);
+

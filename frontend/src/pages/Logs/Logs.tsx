@@ -171,10 +171,10 @@ export default function Logs() {
       {/* Title block */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: '#F3F4F6', mb: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 800, color: '#0F172A', mb: 0.5 }}>
             SIEM Security Activity Logs
           </Typography>
-          <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+          <Typography variant="body2" sx={{ color: '#64748B' }}>
             Real-time ingestion and threat intelligence correlation on incoming SOC events.
           </Typography>
         </Box>
@@ -188,7 +188,7 @@ export default function Logs() {
               />
             }
             label={
-              <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+              <Typography variant="body2" sx={{ color: '#64748B', fontWeight: 500 }}>
                 Auto Refresh (10s)
               </Typography>
             }
@@ -209,14 +209,14 @@ export default function Logs() {
           <Card>
             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                   Fetched Logs Count
                 </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: '#F3F4F6' }}>
+                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: '#0F172A' }}>
                   {logs?.length ?? 0}
                 </Typography>
               </Box>
-              <Box sx={{ p: 1.5, borderRadius: '8px', backgroundColor: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
+              <Box sx={{ p: 1.5, borderRadius: '8px', backgroundColor: '#EFF6FF', color: '#2563EB' }}>
                 <StorageIcon />
               </Box>
             </CardContent>
@@ -226,14 +226,14 @@ export default function Logs() {
           <Card>
             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="caption" sx={{ color: '#EF4444', textTransform: 'uppercase', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#DC2626', textTransform: 'uppercase', fontWeight: 600 }}>
                   Suspicious Events
                 </Typography>
-                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: '#EF4444' }}>
+                <Typography variant="h4" sx={{ fontWeight: 800, mt: 0.5, color: '#DC2626' }}>
                   {suspiciousCount}
                 </Typography>
               </Box>
-              <Box sx={{ p: 1.5, borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#EF4444' }}>
+              <Box sx={{ p: 1.5, borderRadius: '8px', backgroundColor: '#FEF2F2', color: '#DC2626' }}>
                 <SecurityIcon />
               </Box>
             </CardContent>
@@ -254,7 +254,7 @@ export default function Logs() {
               onChange={(e) => setSearch(e.target.value)}
               slotProps={{
                 input: {
-                  startAdornment: <SearchIcon sx={{ color: '#6B7280', mr: 1, fontSize: 20 }} />,
+                  startAdornment: <SearchIcon sx={{ color: '#94A3B8', mr: 1, fontSize: 20 }} />,
                 }
               }}
             />
@@ -317,7 +317,7 @@ export default function Logs() {
       ) : processedLogs.length === 0 ? (
         <EmptyState message="No Logs Found" subMessage="Check that logs are being pushed to `/api/logs` or loosen search filters." />
       ) : (
-        <Paper sx={{ border: '1px solid #1F2937' }}>
+        <Paper sx={{ border: '1px solid #E2E8F0', borderRadius: '10px' }}>
           <TableContainer>
             <Table size="medium">
               <TableHead>
@@ -383,25 +383,25 @@ export default function Logs() {
                       <TableCell>
                         <SeverityBadge severity={log.severity} />
                       </TableCell>
-                      <TableCell sx={{ color: '#E5E7EB', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                      <TableCell sx={{ color: '#334155', fontSize: '0.8rem', fontFamily: 'monospace', fontWeight: 600 }}>
                         {new Date(log.timestamp).toLocaleString()}
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#F3F4F6' }}>
+                      <TableCell sx={{ fontWeight: 600, color: '#0F172A' }}>
                         {log.source}
                       </TableCell>
-                      <TableCell sx={{ fontFamily: 'monospace', color: '#60A5FA', fontSize: '0.8rem' }}>
+                      <TableCell sx={{ fontFamily: 'monospace', color: '#2563EB', fontSize: '0.8rem', fontWeight: 700 }}>
                         {log.event_type}
                       </TableCell>
-                      <TableCell sx={{ color: '#D1D5DB', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '35vw' }}>
+                      <TableCell sx={{ color: '#1E293B', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '35vw', fontWeight: 500 }}>
                         {log.message}
                       </TableCell>
                       <TableCell>
                         {isSuspicious ? (
-                          <Typography variant="body2" sx={{ color: '#EF4444', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <Typography variant="body2" sx={{ color: '#DC2626', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             ⚠️ SUSPICIOUS
                           </Typography>
                         ) : (
-                          <Typography variant="body2" sx={{ color: '#10B981', fontWeight: 600 }}>
+                          <Typography variant="body2" sx={{ color: '#16A34A', fontWeight: 600 }}>
                             ✓ Secure
                           </Typography>
                         )}
@@ -420,7 +420,7 @@ export default function Logs() {
             page={page}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleRowsPerPageChange}
-            sx={{ borderTop: '1px solid #1F2937' }}
+            sx={{ borderTop: '1px solid #E2E8F0' }}
           />
         </Paper>
       )}
@@ -430,14 +430,16 @@ export default function Logs() {
         anchor="right"
         open={selectedLog !== null}
         onClose={() => setSelectedLog(null)}
-        sx={{
-          '& .MuiDrawer-paper': {
-            width: { xs: '100%', sm: 500, md: 650 },
-            backgroundColor: '#0F172A',
-            borderLeft: '1px solid #1E293B',
-            p: 3,
-            boxSizing: 'border-box',
-          }
+        slotProps={{
+          paper: {
+            sx: {
+              width: { xs: '100%', sm: 500, md: 650 },
+              backgroundColor: '#FFFFFF',
+              borderLeft: '1px solid #E2E8F0',
+              p: 3,
+              boxSizing: 'border-box',
+            },
+          },
         }}
       >
         {selectedLog && (
@@ -446,11 +448,11 @@ export default function Logs() {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <StorageIcon color="primary" />
-                <Typography variant="h5" sx={{ fontWeight: 800, color: '#F3F4F6' }}>
+                <Typography variant="h5" sx={{ fontWeight: 800, color: '#0F172A' }}>
                   Log Record Details
                 </Typography>
               </Box>
-              <IconButton onClick={() => setSelectedLog(null)} sx={{ color: '#9CA3AF' }}>
+              <IconButton onClick={() => setSelectedLog(null)} sx={{ color: '#64748B' }}>
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -460,17 +462,17 @@ export default function Logs() {
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 2.5, overflowY: 'auto', pr: 1 }}>
               {/* Basic Fields */}
               <Box>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                   Log Record ID
                 </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 600, color: '#E5E7EB', fontFamily: 'monospace' }}>
+                <Typography variant="body1" sx={{ fontWeight: 700, color: '#2563EB', fontFamily: 'monospace' }}>
                   #{selectedLog.id}
                 </Typography>
               </Box>
 
               <Grid container spacing={2}>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     Severity
                   </Typography>
                   <Box sx={{ mt: 0.5 }}>
@@ -478,10 +480,10 @@ export default function Logs() {
                   </Box>
                 </Grid>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     Source
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 0.5, fontWeight: 700, color: '#F3F4F6' }}>
+                  <Typography variant="body1" sx={{ mt: 0.5, fontWeight: 700, color: '#0F172A' }}>
                     {selectedLog.source}
                   </Typography>
                 </Grid>
@@ -489,18 +491,18 @@ export default function Logs() {
 
               <Grid container spacing={2}>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     Event Type
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 0.5, fontFamily: 'monospace', color: '#60A5FA', fontWeight: 600 }}>
+                  <Typography variant="body1" sx={{ mt: 0.5, fontFamily: 'monospace', color: '#2563EB', fontWeight: 700 }}>
                     {selectedLog.event_type}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     Source IP
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 0.5, fontFamily: 'monospace', color: '#E5E7EB' }}>
+                  <Typography variant="body1" sx={{ mt: 0.5, fontFamily: 'monospace', color: '#0F172A', fontWeight: 600 }}>
                     {selectedLog.source_ip || 'N/A'}
                   </Typography>
                 </Grid>
@@ -508,38 +510,38 @@ export default function Logs() {
 
               <Grid container spacing={2}>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     Host
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 0.5, color: '#E5E7EB' }}>
+                  <Typography variant="body1" sx={{ mt: 0.5, color: '#0F172A', fontWeight: 600 }}>
                     {selectedLog.host || 'N/A'}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 6 }}>
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     User / Account
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 0.5, color: '#E5E7EB' }}>
+                  <Typography variant="body1" sx={{ mt: 0.5, color: '#0F172A', fontWeight: 600 }}>
                     {selectedLog.user || 'N/A'}
                   </Typography>
                 </Grid>
               </Grid>
 
               <Box>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                   Event Timestamp
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#E5E7EB', mt: 0.5, fontFamily: 'monospace' }}>
+                <Typography variant="body1" sx={{ color: '#334155', mt: 0.5, fontFamily: 'monospace', fontWeight: 600 }}>
                   {new Date(selectedLog.timestamp).toUTCString()} ({new Date(selectedLog.timestamp).toLocaleString()})
                 </Typography>
               </Box>
 
               <Box>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                   Log Message
                 </Typography>
-                <Paper sx={{ p: 2, mt: 0.5, bgcolor: '#070A13', border: '1px solid #1E293B', color: '#F3F4F6', wordBreak: 'break-all' }}>
-                  <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                <Paper sx={{ p: 2, mt: 0.5, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', color: '#0F172A', wordBreak: 'break-all' }}>
+                  <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600, color: '#0F172A' }}>
                     {selectedLog.message}
                   </Typography>
                 </Paper>
@@ -547,7 +549,7 @@ export default function Logs() {
 
               {/* Threat Scan Analysis */}
               <Box>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                   Threat Detection Scan Result
                 </Typography>
                 <Paper
@@ -555,8 +557,8 @@ export default function Logs() {
                     p: 2.5,
                     mt: 0.5,
                     border: '1px solid',
-                    borderColor: selectedLog.detection?.is_suspicious ? '#EF444440' : '#10B98140',
-                    backgroundColor: selectedLog.detection?.is_suspicious ? 'rgba(239, 68, 68, 0.04)' : 'rgba(16, 185, 129, 0.04)',
+                    borderColor: selectedLog.detection?.is_suspicious ? '#FECACA' : '#BBF7D0',
+                    backgroundColor: selectedLog.detection?.is_suspicious ? '#FEF2F2' : '#F0FDF4',
                   }}
                 >
                   <Typography
@@ -564,7 +566,7 @@ export default function Logs() {
                     sx={{
                       fontSize: '1rem',
                       fontWeight: 700,
-                      color: selectedLog.detection?.is_suspicious ? '#EF4444' : '#10B981',
+                      color: selectedLog.detection?.is_suspicious ? '#DC2626' : '#16A34A',
                       mb: selectedLog.detection?.is_suspicious ? 1 : 0,
                     }}
                   >
@@ -572,11 +574,11 @@ export default function Logs() {
                   </Typography>
                   {selectedLog.detection?.is_suspicious && (
                     <>
-                      <Typography variant="body2" sx={{ color: '#F3F4F6', fontWeight: 500, mb: 1 }}>
-                        <span style={{ color: '#9CA3AF' }}>Reason:</span> {selectedLog.detection.reason}
+                      <Typography variant="body2" sx={{ color: '#0F172A', fontWeight: 500, mb: 1 }}>
+                        <span style={{ color: '#64748B' }}>Reason:</span> {selectedLog.detection.reason}
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                        <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
+                        <Typography variant="caption" sx={{ color: '#64748B' }}>
                           Detection Severity:
                         </Typography>
                         <SeverityBadge severity={selectedLog.detection.severity} />
@@ -589,8 +591,8 @@ export default function Logs() {
               {/* Collapsible raw metadata inspector */}
               <Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  <CodeIcon fontSize="small" sx={{ color: '#3B82F6' }} />
-                  <Typography variant="caption" sx={{ color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <CodeIcon fontSize="small" sx={{ color: '#2563EB' }} />
+                  <Typography variant="caption" sx={{ color: '#64748B', textTransform: 'uppercase', fontWeight: 600 }}>
                     Log Metadata (JSON)
                   </Typography>
                 </Box>
@@ -599,12 +601,13 @@ export default function Logs() {
                   sx={{
                     p: 2,
                     m: 0,
-                    backgroundColor: '#070A13',
-                    border: '1px solid #1E293B',
+                    backgroundColor: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
                     borderRadius: '6px',
-                    color: '#34D399',
+                    color: '#0F172A',
                     fontSize: '0.775rem',
                     fontFamily: 'monospace',
+                    fontWeight: 600,
                     overflowX: 'auto',
                     maxHeight: 250,
                   }}

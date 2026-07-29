@@ -11,6 +11,8 @@ import IncidentDetails from './pages/IncidentDetails/IncidentDetails';
 import Logs from './pages/Logs/Logs';
 import Alerts from './pages/Alerts/Alerts';
 import Investigations from './pages/Investigations/Investigations';
+import { SystemHealthDashboard } from './pages/SystemHealth/SystemHealthDashboard';
+import { ServiceInformationPage } from './pages/ServiceInformation/ServiceInformation';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -34,6 +36,11 @@ export default function App() {
               <Route index element={<Dashboard />} />
               {/* Raw logs page */}
               <Route path="logs" element={<Logs />} />
+              {/* System Health Dashboard */}
+              <Route path="system-health" element={<SystemHealthDashboard />} />
+              <Route path="port-traffic-report" element={<SystemHealthDashboard />} />
+              {/* Service Information page */}
+              <Route path="service-information" element={<ServiceInformationPage />} />
               {/* Incident queue table */}
               <Route path="incidents" element={<Incidents />} />
               {/* Incident Details and actions */}
